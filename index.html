@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com;">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="index, follow">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="LifeOS - AI-Powered Life Manager for productivity, mood tracking, expense management, and personal growth.">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>LifeOS - Your Digital Brain</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo" onclick="showDashboard();" style="cursor: pointer;">LifeOS</div>
+        <div class="nav-links">
+            <a href="#dashboard" class="active" onclick="showDashboard(); return true;"><i class="fas fa-home"></i> <span data-i18n="dashboard">Dashboard</span></a>
+            <a href="#tasks" onclick="showTasks(); return true;"><i class="fas fa-tasks"></i> <span data-i18n="tasks">Tasks</span></a>
+            <a href="#analytics" onclick="showAnalytics(); return true;"><i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span></a>
+            <a href="#calendar" onclick="showCalendar(); return true;"><i class="fas fa-calendar"></i> <span data-i18n="calendar">Calendar</span></a>
+            <a href="#expenses" onclick="showExpenses(); return true;"><i class="fas fa-wallet"></i> <span data-i18n="expenses">Expenses</span></a>
+            
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+                <button class="lang-btn active" onclick="changeLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('ur')">اردو</button>
+                <button class="lang-btn" onclick="changeLanguage('ar')">عربي</button>
+                <button class="lang-btn" onclick="changeLanguage('es')">ES</button>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <div class="theme-toggle" onclick="App.toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="theme-toggle" id="userMenu" onclick="AuthManager.toggleAuth()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Authentication Container -->
+    <div id="authContainer" class="auth-container">
+        <h2 style="text-align: center; margin-bottom: 2rem;" data-i18n="welcomeBack">Welcome Back!</h2>
+        <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+            <input type="email" placeholder="Email" id="email" required>
+            <input type="password" placeholder="Password" id="password" required>
+            <button type="submit" data-i18n="login">Login</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem;">
+            <span data-i18n="noAccount">Don't have an account?</span>
+            <a href="#" onclick="showSignup(); return false;" style="color: var(--accent-primary);" data-i18n="signup">Sign up</a>
+        </p>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="container hidden" id="mainDashboard">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 data-i18n="welcomeMessage">Welcome back, User! 👋</h1>
+            <div class="streak-counter">
+                <i class="fas fa-fire" style="color: var(--warning);"></i>
+                <span id="streakCount">7</span> <span data-i18n="dayStreak">day streak</span>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Task Manager Card -->
+            <div class="dashboard-card" id="taskManagerCard" data-page="tasks">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-tasks"></i>
+                        <span data-i18n="smartTaskManager">Smart Task Manager</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="task-input">
+                    <input type="text" id="taskInput" placeholder="Add a new task..." data-i18n="taskPlaceholder">
+                    <select id="taskCategory">
+                        <option value="study" data-i18n="study">Study</option>
+                        <option value="health" data-i18n="health">Health</option>
+                        <option value="work" data-i18n="work">Work</option>
+                        <option value="personal" data-i18n="personal">Personal</option>
+                    </select>
+                    <select id="taskPriority">
+                        <option value="high" data-i18n="high">High</option>
+                        <option value="medium" data-i18n="medium">Medium</option>
+                        <option value="low" data-i18n="low">Low</option>
+                    </select>
+                    <input type="date" id="taskDeadline">
+                    <button onclick="addTask()" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <ul class="task-list" id="taskList"></ul>
+
+                <div class="task-filters">
+                    <input type="text" id="taskSearch" placeholder="Search tasks..." class="search-input">
+                    <select id="taskFilter" class="filter-select">
+                        <option value="all" data-i18n="all">All</option>
+                        <option value="completed" data-i18n="completed">Completed</option>
+                        <option value="pending" data-i18n="pending">Pending</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Productivity Analytics Card -->
+            <div class="dashboard-card" id="productivityCard" data-page="analytics">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span data-i18n="productivityAnalytics">Productivity Analytics</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <canvas id="productivityChart" class="chart-canvas"></canvas>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="completionRate">85%</div>
+                        <div class="stat-label" data-i18n="completionRate">Completion Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="productiveDay">Tuesday</div>
+                        <div class="stat-label" data-i18n="mostProductive">Most Productive</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mental Health Tracker Card -->
+            <div class="dashboard-card" id="moodCard" data-page="dashboard">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-heart"></i>
+                        <span data-i18n="mentalHealth">Mental Health Tracker</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="mood-selector">
+                    <button class="mood-btn" onclick="logMood('😊')">😊</button>
+                    <button class="mood-btn" onclick="logMood('😐')">😐</button>
+                    <button class="mood-btn" onclick="logMood('😔')">😔</button>
+                    <button class="mood-btn" onclick="logMood('😤')">😤</button>
+                    <button class="mood-btn" onclick="logMood('😴')">😴</button>
+                </div>
+                
+                <textarea id="journalEntry" placeholder="Write a quick journal entry..." class="journal-input" rows="3"></textarea>
+                
+                <div class="gratitude-section">
+                    <i class="fas fa-sun" style="color: var(--warning);"></i>
+                    <span data-i18n="gratitudeNote">I'm grateful for:</span>
+                    <input type="text" id="gratitudeInput" placeholder="Today I'm grateful for..." class="gratitude-input">
+                    <button onclick="MoodManager.showHistory()" class="view-history-btn-sm">
+                        <i class="fas fa-history"></i>
+                    </button>
+                </div>
+                
+                <canvas id="moodChart" class="chart-canvas small"></canvas>
+            </div>
+
+            <!-- Expense Tracker Card -->
+            <div class="dashboard-card" id="expenseCard" data-page="expenses">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-wallet"></i>
+                        <span data-i18n="expenseTracker">Expense Tracker</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="balance-display">
+                    <div class="balance-label" data-i18n="currentBalance">Current Balance</div>
+                    <div class="balance-amount" id="balance">$0.00</div>
+                    <button onclick="TransactionManager.showTransactionHistory()" class="view-history-btn">
+                        <i class="fas fa-history"></i> View All
+                    </button>
+                </div>
+                
+                <div class="transaction-inputs">
+                    <input type="text" id="expenseDesc" placeholder="Description" class="expense-desc">
+                    <input type="number" id="expenseAmount" placeholder="Amount" class="expense-amount">
+                </div>
+                
+                <div class="transaction-controls">
+                    <select id="expenseCategory" class="category-select">
+                        <option value="income" data-i18n="income">Income</option>
+                        <option value="food" data-i18n="food">Food</option>
+                        <option value="transport" data-i18n="transport">Transport</option>
+                        <option value="entertainment" data-i18n="entertainment">Entertainment</option>
+                        <option value="bills" data-i18n="bills">Bills</option>
+                    </select>
+                    <button onclick="addTransaction()" class="btn-primary">
+                        <i class="fas fa-plus"></i> <span data-i18n="add">Add</span>
+                    </button>
+                </div>
+                
+                <canvas id="expenseChart" class="chart-canvas small"></canvas>
+            </div>
+
+            <!-- Smart Calendar Card -->
+            <div class="dashboard-card" id="calendarCard" data-page="calendar">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-calendar"></i>
+                        <span data-i18n="smartCalendar">Smart Calendar</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="previousMonth()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="current-month" id="currentMonth">March 2024</span>
+                    <button class="calendar-nav" onclick="nextMonth()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid"></div>
+                
+                <div class="upcoming-tasks">
+                    <div class="upcoming-title" data-i18n="upcomingTasks">Upcoming Tasks</div>
+                    <div id="upcomingTasks" class="upcoming-list"></div>
+                </div>
+            </div>
+
+            <!-- Global Time Zone Card -->
+            <div class="dashboard-card" id="timezoneCard" data-page="dashboard">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-globe"></i>
+                        <span data-i18n="globalTime">Global Time Zone</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="timezone-grid" id="timezoneGrid">
+                    <div class="timezone-item">
+                        <div class="timezone-country">🇵🇰 <span data-i18n="pakistan">Pakistan</span></div>
+                        <div class="timezone-time" id="pkTime">--:--</div>
+                    </div>
+                    <div class="timezone-item">
+                        <div class="timezone-country">🇺🇸 <span data-i18n="usa">USA (NY)</span></div>
+                        <div class="timezone-time" id="usTime">--:--</div>
+                    </div>
+                    <div class="timezone-item">
+                        <div class="timezone-country">🇬🇧 <span data-i18n="uk">UK</span></div>
+                        <div class="timezone-time" id="ukTime">--:--</div>
+                    </div>
+                    <div class="timezone-item">
+                        <div class="timezone-country">🇯🇵 <span data-i18n="japan">Japan</span></div>
+                        <div class="timezone-time" id="jpTime">--:--</div>
+                    </div>
+                </div>
+                
+                <button class="add-timezone-btn" onclick="addTimezone()">
+                    <i class="fas fa-plus"></i> <span data-i18n="addTimezone">Add Timezone</span>
+                </button>
+            </div>
+
+            <!-- Gamification Card -->
+            <div class="dashboard-card" id="gamificationCard" data-page="dashboard">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-trophy"></i>
+                        <span data-i18n="achievements">Achievements</span>
+                    </div>
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+                
+                <div class="xp-section">
+                    <div class="xp-level">
+                        <span class="level-number">Level 7</span>
+                        <span class="xp-points">650/1000 XP</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                
+                <div class="badges-grid">
+                    <div class="badge-item">
+                        <div class="badge-icon">🔥</div>
+                        <div class="badge-label" data-i18n="streakMaster">Streak Master</div>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon">✅</div>
+                        <div class="badge-label" data-i18n="taskHero">Task Hero</div>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon">💰</div>
+                        <div class="badge-label" data-i18n="saver">Saver</div>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-icon">🧠</div>
+                        <div class="badge-label" data-i18n="mindful">Mindful</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Installation Prompt -->
+    <div id="installPrompt" class="install-prompt hidden">
+        <div class="install-content">
+            <i class="fas fa-download install-icon"></i>
+            <div class="install-text">
+                <div class="install-title" data-i18n="installApp">Install LifeOS App</div>
+                <div class="install-desc" data-i18n="installDesc">Install on your device for offline use</div>
+            </div>
+            <button onclick="installPWA()" class="btn-primary" data-i18n="install">Install</button>
+            <button onclick="dismissInstall()" class="btn-close">✕</button>
+        </div>
+    </div>
+
+    <!-- Core Utility Modules (load first) -->
+    <script src="js/utils/security.js"></script>
+    <script src="js/utils/notifications.js"></script>
+    <script src="js/utils/dataManager.js"></script>
+    <script src="js/utils/modal.js"></script>
+    <script src="js/utils/performance.js"></script>
+    
+    <!-- Feature Managers -->
+    <script src="js/i18n.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/moodManager.js"></script>
+    <script src="js/transactionManager.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/tasks.js"></script>
+    
+    <!-- Main App -->
+    <script src="js/app.js"></script>
+    
+    <!-- Initialize App -->
+    <script>
+        // Wait for all scripts to load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('LifeOS v2.0 - AI-Powered Life Manager');
+            console.log('Security features enabled');
+            
+            // Check for security warnings
+            if (!SecurityUtils.validateCSP()) {
+                console.warn('Content Security Policy not detected');
+            }
+            
+            // Initialize data manager
+            DataManager.initialize();
+        });
+    </script>
+</body>
+</html>

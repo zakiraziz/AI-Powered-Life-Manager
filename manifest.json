@@ -1,0 +1,76 @@
+{
+    "name": "LifeOS - Your Digital Brain",
+    "short_name": "LifeOS",
+    "description": "AI-Powered Life Manager - Track tasks, mood, expenses, and productivity",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0f1e",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "assets/icons/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Add Task",
+            "short_name": "Add Task",
+            "description": "Quickly add a new task",
+            "url": "/?action=add-task",
+            "icons": [{ "src": "assets/icons/task-icon.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Log Mood",
+            "short_name": "Mood",
+            "description": "Log your daily mood",
+            "url": "/?action=log-mood",
+            "icons": [{ "src": "assets/icons/mood-icon.png", "sizes": "192x192" }]
+        }
+    ],
+    "categories": ["productivity", "lifestyle", "health"],
+    "screenshots": [
+        {
+            "src": "assets/screenshots/dashboard.jpg",
+            "sizes": "1280x720",
+            "type": "image/jpeg"
+        }
+    ]
+}

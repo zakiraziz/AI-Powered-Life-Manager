@@ -98,6 +98,16 @@ const TaskManager = {
         if (typeof updateProductivityStats === 'function') {
             updateProductivityStats();
         }
+        
+        // Update streak
+        if (typeof updateStreak === 'function') {
+            updateStreak();
+        }
+        
+        // Update gamification
+        if (typeof updateGamification === 'function') {
+            updateGamification();
+        }
 
         NotificationSystem.success('Task added successfully!', 2000);
     },

@@ -343,6 +343,16 @@ const App = {
     showPage(page) {
         const cards = document.querySelectorAll('.dashboard-card');
         
+        // Dashboard shows all cards
+        if (page === 'dashboard' || page === '') {
+            cards.forEach(card => {
+                card.style.display = '';
+                card.classList.remove('hidden');
+            });
+            return;
+        }
+        
+        // For other pages, show only matching cards
         cards.forEach(card => {
             const cardPage = card.getAttribute('data-page');
             
@@ -384,22 +394,53 @@ const App = {
     
     showDashboard() {
         window.location.hash = 'dashboard';
+        // Ensure dashboard is shown
+        const mainDashboard = document.getElementById('mainDashboard');
+        if (mainDashboard) {
+            mainDashboard.classList.remove('hidden');
+        }
+        // Show all cards on dashboard
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach(card => {
+            card.style.display = '';
+            card.classList.remove('hidden');
+        });
     },
     
     showTasks() {
         window.location.hash = 'tasks';
+        const mainDashboard = document.getElementById('mainDashboard');
+        if (mainDashboard) {
+            mainDashboard.classList.remove('hidden');
+        }
+        this.showPage('tasks');
     },
     
     showAnalytics() {
         window.location.hash = 'analytics';
+        const mainDashboard = document.getElementById('mainDashboard');
+        if (mainDashboard) {
+            mainDashboard.classList.remove('hidden');
+        }
+        this.showPage('analytics');
     },
     
     showCalendar() {
         window.location.hash = 'calendar';
+        const mainDashboard = document.getElementById('mainDashboard');
+        if (mainDashboard) {
+            mainDashboard.classList.remove('hidden');
+        }
+        this.showPage('calendar');
     },
     
     showExpenses() {
         window.location.hash = 'expenses';
+        const mainDashboard = document.getElementById('mainDashboard');
+        if (mainDashboard) {
+            mainDashboard.classList.remove('hidden');
+        }
+        this.showPage('expenses');
     },
 
     // ===== DATA EXPORT/IMPORT =====
@@ -493,11 +534,78 @@ window.importData = () => App.importData();
 window.navigateTo = (page) => {
     window.location.hash = page;
 };
-window.showDashboard = () => App.showDashboard();
-window.showTasks = () => App.showTasks();
-window.showAnalytics = () => App.showAnalytics();
-window.showCalendar = () => App.showCalendar();
-window.showExpenses = () => App.showExpenses();
+window.showDashboard = function() {
+    window.location.hash = 'dashboard';
+    // Ensure dashboard container is shown
+    const authContainer = document.getElementById('authContainer');
+    const mainDashboard = document.getElementById('mainDashboard');
+    if (authContainer) authContainer.classList.add('hidden');
+    if (mainDashboard) {
+        mainDashboard.classList.remove('hidden');
+    }
+    // Show all cards
+    const cards = document.querySelectorAll('.dashboard-card');
+    cards.forEach(card => {
+        card.style.display = '';
+        card.classList.remove('hidden');
+    });
+    // Update active nav
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#dashboard') {
+            link.classList.add('active');
+        }
+    });
+};
+window.showTasks = function() {
+    window.location.hash = 'tasks';
+    const authContainer = document.getElementById('authContainer');
+    const mainDashboard = document.getElementById('mainDashboard');
+    if (authContainer) authContainer.classList.add('hidden');
+    if (mainDashboard) mainDashboard.classList.remove('hidden');
+    if (App) App.showPage('tasks');
+    // Update active nav
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#tasks') link.classList.add('active');
+    });
+};
+window.showAnalytics = function() {
+    window.location.hash = 'analytics';
+    const authContainer = document.getElementById('authContainer');
+    const mainDashboard = document.getElementById('mainDashboard');
+    if (authContainer) authContainer.classList.add('hidden');
+    if (mainDashboard) mainDashboard.classList.remove('hidden');
+    if (App) App.showPage('analytics');
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#analytics') link.classList.add('active');
+    });
+};
+window.showCalendar = function() {
+    window.location.hash = 'calendar';
+    const authContainer = document.getElementById('authContainer');
+    const mainDashboard = document.getElementById('mainDashboard');
+    if (authContainer) authContainer.classList.add('hidden');
+    if (mainDashboard) mainDashboard.classList.remove('hidden');
+    if (App) App.showPage('calendar');
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#calendar') link.classList.add('active');
+    });
+};
+window.showExpenses = function() {
+    window.location.hash = 'expenses';
+    const authContainer = document.getElementById('authContainer');
+    const mainDashboard = document.getElementById('mainDashboard');
+    if (authContainer) authContainer.classList.add('hidden');
+    if (mainDashboard) mainDashboard.classList.remove('hidden');
+    if (App) App.showPage('expenses');
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#expenses') link.classList.add('active');
+    });
+};
 
 // Import data from file handler
 window.importDataFromFile = function(event) {
@@ -531,3 +639,240 @@ window.importDataFromFile = function(event) {
 
 // Initialize service worker
 document.addEventListener('DOMContentLoaded', () => App.registerServiceWorker());
+
+// ===== CALENDAR FUNCTIONS =====
+let currentCalendarDate = new Date();
+
+function generateCalendar() {
+    const calendarGrid = document.getElementById('calendarGrid');
+    if (!calendarGrid) return;
+    
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+    
+    // Update month display
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthDisplay = document.getElementById('currentMonth');
+    if (monthDisplay) {
+        monthDisplay.textContent = `${monthNames[month]} ${year}`;
+    }
+    
+    // Get first day of month and total days
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // Get tasks for this month
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const tasksByDate = {};
+    tasks.forEach(task => {
+        if (task.deadline) {
+            tasksByDate[task.deadline] = (tasksByDate[task.deadline] || 0) + 1;
+        }
+    });
+    
+    // Build calendar HTML
+    let html = '<div class="calendar-day-header">Sun</div>';
+    html += '<div class="calendar-day-header">Mon</div>';
+    html += '<div class="calendar-day-header">Tue</div>';
+    html += '<div class="calendar-day-header">Wed</div>';
+    html += '<div class="calendar-day-header">Thu</div>';
+    html += '<div class="calendar-day-header">Fri</div>';
+    html += '<div class="calendar-day-header">Sat</div>';
+    
+    // Empty cells for days before first
+    for (let i = 0; i < firstDay; i++) {
+        html += '<div class="calendar-day empty"></div>';
+    }
+    
+    // Days of month
+    const today = new Date().toISOString().split('T')[0];
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = dateStr === today;
+        const taskCount = tasksByDate[dateStr] || 0;
+        
+        html += `<div class="calendar-day ${isToday ? 'today' : ''}" onclick="showTasksForDate('${dateStr}')">
+            <span class="day-number">${day}</span>
+            ${taskCount > 0 ? `<span class="task-indicator">${taskCount}</span>` : ''}
+        </div>`;
+    }
+    
+    calendarGrid.innerHTML = html;
+    
+    // Update upcoming tasks
+    updateUpcomingTasks();
+}
+
+function previousMonth() {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+    generateCalendar();
+}
+
+function nextMonth() {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+    generateCalendar();
+}
+
+function showTasksForDate(date) {
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const tasksForDate = tasks.filter(t => t.deadline === date);
+    
+    if (tasksForDate.length === 0) {
+        NotificationSystem.info('No tasks for this date');
+        return;
+    }
+    
+    const content = tasksForDate.map(task => `
+        <div style="padding: 12px; margin-bottom: 8px; background: var(--bg-primary); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-weight: 500;">${SecurityUtils.escapeHtml(task.title)}</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">${task.category} • ${task.priority}</div>
+            </div>
+            <div style="font-size: 1.5rem;">${task.completed ? '✅' : '⬜'}</div>
+        </div>
+    `).join('');
+    
+    ModalManager.create({
+        id: 'tasks-for-date-modal',
+        title: 'Tasks for ' + new Date(date).toLocaleDateString(),
+        content,
+        size: 'medium',
+        buttons: [{ id: 'close', text: 'Close', primary: true }]
+    });
+}
+
+function updateUpcomingTasks() {
+    const upcomingContainer = document.getElementById('upcomingTasks');
+    if (!upcomingContainer) return;
+    
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const today = new Date().toISOString().split('T')[0];
+    
+    const upcoming = tasks
+        .filter(t => !t.completed && t.deadline >= today)
+        .sort((a, b) => a.deadline.localeCompare(b.deadline))
+        .slice(0, 5);
+    
+    if (upcoming.length === 0) {
+        upcomingContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">No upcoming tasks</div>';
+        return;
+    }
+    
+    upcomingContainer.innerHTML = upcoming.map(task => `
+        <div class="upcoming-item">
+            <div class="upcoming-task">${SecurityUtils.escapeHtml(task.title)}</div>
+            <div class="upcoming-date">${new Date(task.deadline).toLocaleDateString()}</div>
+        </div>
+    `).join('');
+}
+
+// Productivity stats update function
+function updateProductivityStats() {
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const completed = tasks.filter(t => t.completed).length;
+    const total = tasks.length;
+    const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    
+    const rateEl = document.getElementById('completionRate');
+    if (rateEl) rateEl.textContent = `${rate}%`;
+    
+    // Calculate streak based on completed tasks
+    updateStreak();
+}
+
+function updateStreak() {
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const completedTasks = tasks.filter(t => t.completed);
+    
+    if (completedTasks.length === 0) {
+        const streakEl = document.getElementById('streakCount');
+        if (streakEl) streakEl.textContent = '0';
+        return;
+    }
+    
+    // Get unique dates when tasks were completed
+    const completedDates = new Set();
+    completedTasks.forEach(task => {
+        if (task.completedAt) {
+            completedDates.add(task.completedAt.split('T')[0]);
+        }
+    });
+    
+    // Calculate streak - count consecutive days backwards from today
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 365; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        const dateStr = checkDate.toISOString().split('T')[0];
+        
+        if (completedDates.has(dateStr)) {
+            streak++;
+        } else if (i > 0) {
+            // Break streak if not today and no task completed
+            break;
+        }
+    }
+    
+    const streakEl = document.getElementById('streakCount');
+    if (streakEl) streakEl.textContent = streak.toString();
+}
+
+// Update level/XP based on completed tasks
+function updateGamification() {
+    const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+    const completedCount = tasks.filter(t => t.completed).length;
+    
+    // Calculate XP: 10 XP per completed task
+    const xp = completedCount * 10;
+    
+    // Calculate level: level up every 100 XP
+    const level = Math.floor(xp / 100) + 1;
+    const xpInLevel = xp % 100;
+    const xpNeeded = 100;
+    
+    // Update DOM
+    const levelEl = document.querySelector('.level-number');
+    const xpEl = document.querySelector('.xp-points');
+    const progressEl = document.querySelector('.progress-fill');
+    
+    if (levelEl) levelEl.textContent = `Level ${level}`;
+    if (xpEl) xpEl.textContent = `${xpInLevel}/${xpNeeded} XP`;
+    if (progressEl) progressEl.style.width = `${xpInLevel}%`;
+}
+
+// Update balance function
+function updateBalance() {
+    const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
+    const income = transactions.filter(t => t.category === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const expenses = transactions.filter(t => t.category !== 'income').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const balance = income - expenses;
+    
+    const balanceEl = document.getElementById('balance');
+    if (balanceEl) {
+        balanceEl.textContent = `${balance.toFixed(2)}`;
+        balanceEl.style.color = balance >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+}
+
+// I18n global object
+const I18n = {
+    t: function(key) {
+        const lang = localStorage.getItem('language') || 'en';
+        return translations[lang]?.[key] || translations['en']?.[key] || key;
+    }
+};
+window.I18n = I18n;
+
+// Make calendar functions global
+window.generateCalendar = generateCalendar;
+window.previousMonth = previousMonth;
+window.nextMonth = nextMonth;
+window.showTasksForDate = showTasksForDate;
+window.updateProductivityStats = updateProductivityStats;
+window.updateBalance = updateBalance;
+window.updateStreak = updateStreak;
+window.updateGamification = updateGamification;

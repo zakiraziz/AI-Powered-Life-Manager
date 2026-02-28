@@ -42,13 +42,13 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="logo" onclick="showDashboard();" style="cursor: pointer;">LifeOS</div>
+        <div class="logo" onclick="App ? App.showDashboard() : showDashboard();" style="cursor: pointer;">LifeOS</div>
         <div class="nav-links">
-            <a href="#dashboard" class="active" onclick="showDashboard(); return true;"><i class="fas fa-home"></i> <span data-i18n="dashboard">Dashboard</span></a>
-            <a href="#tasks" onclick="showTasks(); return true;"><i class="fas fa-tasks"></i> <span data-i18n="tasks">Tasks</span></a>
-            <a href="#analytics" onclick="showAnalytics(); return true;"><i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span></a>
-            <a href="#calendar" onclick="showCalendar(); return true;"><i class="fas fa-calendar"></i> <span data-i18n="calendar">Calendar</span></a>
-            <a href="#expenses" onclick="showExpenses(); return true;"><i class="fas fa-wallet"></i> <span data-i18n="expenses">Expenses</span></a>
+            <a href="#dashboard" class="active" onclick="if(App)App.showDashboard(); else showDashboard(); return false;"><i class="fas fa-home"></i> <span data-i18n="dashboard">Dashboard</span></a>
+            <a href="#tasks" onclick="if(App)App.showTasks(); else showTasks(); return false;"><i class="fas fa-tasks"></i> <span data-i18n="tasks">Tasks</span></a>
+            <a href="#analytics" onclick="if(App)App.showAnalytics(); else showAnalytics(); return false;"><i class="fas fa-chart-line"></i> <span data-i18n="analytics">Analytics</span></a>
+            <a href="#calendar" onclick="if(App)App.showCalendar(); else showCalendar(); return false;"><i class="fas fa-calendar"></i> <span data-i18n="calendar">Calendar</span></a>
+            <a href="#expenses" onclick="if(App)App.showExpenses(); else showExpenses(); return false;"><i class="fas fa-wallet"></i> <span data-i18n="expenses">Expenses</span></a>
             
             <!-- Language Switcher -->
             <div class="language-switcher">
@@ -63,9 +63,22 @@
                 <i class="fas fa-moon"></i>
             </div>
             
-            <!-- User Menu -->
-            <div class="theme-toggle" id="userMenu" onclick="AuthManager.toggleAuth()">
-                <i class="fas fa-user"></i>
+            <!-- User Menu Dropdown -->
+            <div class="user-menu-container" id="userMenuContainer" style="display: none;">
+                <button class="user-menu-btn" id="userMenuBtn" onclick="AuthManager.toggleUserMenu(event)">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div class="user-dropdown" id="userDropdown" style="display: none;">
+                    <div class="dropdown-header">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="dropdownUserName">User</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" onclick="AuthManager.viewProfile(); AuthManager.closeUserMenu(); return false;"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#" onclick="AuthManager.viewSettings(); AuthManager.closeUserMenu(); return false;"><i class="fas fa-cog"></i> Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" onclick="AuthManager.handleLogout(); return false;" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -91,7 +104,7 @@
             <h1 data-i18n="welcomeMessage">Welcome back, User! 👋</h1>
             <div class="streak-counter">
                 <i class="fas fa-fire" style="color: var(--warning);"></i>
-                <span id="streakCount">7</span> <span data-i18n="dayStreak">day streak</span>
+                <span id="streakCount">0</span> <span data-i18n="dayStreak">day streak</span>
             </div>
         </div>
 
@@ -382,6 +395,89 @@
             
             // Initialize data manager
             DataManager.initialize();
+            
+            // Initialize all managers
+            if (typeof App !== 'undefined' && App.init) {
+                App.init();
+            }
+            
+            // Initialize theme
+            if (typeof toggleTheme !== 'undefined') {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+            
+            // Initialize calendar
+            if (typeof generateCalendar === 'function') {
+                generateCalendar();
+            }
+            
+            // Update balance
+            if (typeof updateBalance === 'function') {
+                updateBalance();
+            }
+            
+            // Update productivity stats
+            if (typeof updateProductivityStats === 'function') {
+                updateProductivityStats();
+            }
+            
+            // Update streak
+            if (typeof updateStreak === 'function') {
+                updateStreak();
+            }
+            
+            // Update gamification (level/XP)
+            if (typeof updateGamification === 'function') {
+                updateGamification();
+            }
+            
+            // Initialize charts if ChartManager is available
+            if (typeof ChartManager !== 'undefined' && ChartManager.init) {
+                ChartManager.init();
+            }
+            
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('lifeos_current_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    if (user && user.email) {
+                        AuthManager.currentUser = user;
+                        AuthManager.handleAuthState();
+                    }
+                } catch (e) {
+                    console.log('No valid saved session');
+                }
+            }
+            
+            // Also try to load from secure storage
+            if (!AuthManager.currentUser) {
+                AuthManager.loadSession();
+                if (AuthManager.currentUser) {
+                    AuthManager.handleAuthState();
+                }
+            }
+            
+            // Show dashboard after auth check
+            if (AuthManager.currentUser) {
+                showDashboard();
+            }
+            
+            // Apply saved language
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && typeof changeLanguage === 'function') {
+                changeLanguage(savedLang);
+            }
+            
+            // Handle initial hash navigation
+            const hash = window.location.hash.slice(1);
+            if (hash && hash !== 'dashboard') {
+                // Navigation will be handled by hashchange listener
+            } else {
+                // Show dashboard by default
+                showDashboard();
+            }
         });
     </script>
 </body>

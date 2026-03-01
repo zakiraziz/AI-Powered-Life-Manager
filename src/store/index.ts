@@ -30,7 +30,6 @@ export type AppDispatch = typeof store.dispatch;
 
 // Re-export actions for convenience
 export * from './slices/authSlice';
-export * from './slices/tasksSlice';
 export * from './slices/moodsSlice';
 export * from './slices/transactionsSlice';
 export * from './slices/uiSlice';

@@ -1,11 +1,5 @@
 // ===== script.js - Main JavaScript File for LifeOS =====
 // Combined and optimized version of all modules
-console.log('[Debug] app.js is loading...');
-
-window.onerror = function(msg, url, line, col, error) {
-    console.error('[Debug] Global error:', msg, 'at line', line);
-    return false;
-};
 
 // ===== SECURITY UTILITIES =====
 const SecurityUtils = {
@@ -2672,46 +2666,24 @@ const App = {
     init() {
         if (this.initialized) return;
         
-        try {
         // Initialize all modules
-        console.log('[Debug] Initializing DataManager...');
         DataManager.initialize();
-        console.log('[Debug] DataManager initialized');
-        
-        console.log('[Debug] Initializing NotificationSystem...');
         NotificationSystem.init();
-        console.log('[Debug] NotificationSystem initialized');
         
         // Initialize theme
-        console.log('[Debug] Initializing theme...');
         this.initializeTheme();
-        console.log('[Debug] Theme initialized');
         
         // Initialize components
-        console.log('[Debug] Initializing components...');
         this.initializeComponents();
-        console.log('[Debug] Components initialized');
-        
-        // Initialize event listeners
-        console.log('[Debug] Initializing event listeners...');
         this.initializeEventListeners();
-        console.log('[Debug] Event listeners initialized');
-        
-        // Initialize PWA
-        console.log('[Debug] Initializing PWA...');
         this.initializePWA();
-        console.log('[Debug] PWA initialized');
         
         // Initialize auth
-        console.log('[Debug] Initializing AuthManager...');
         AuthManager.init();
-        console.log('[Debug] AuthManager initialized');
         
         // Initialize charts after auth
         setTimeout(() => {
-            console.log('[Debug] Initializing ChartManager...');
             ChartManager.init();
-            console.log('[Debug] ChartManager initialized');
         }, 100);
         
         this.initialized = true;
@@ -2724,14 +2696,6 @@ const App = {
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
             }, 500);
-        }
-        } catch (error) {
-            console.error('[Debug] Error during initialization:', error);
-            // Still try to hide loading screen on error
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
         }
     },
 
@@ -3594,9 +3558,7 @@ window.nextMonth = nextMonth;
 window.showTasksForDate = showTasksForDate;
 
 // Initialize everything when DOM is ready
-console.log('[Debug] Setting up DOMContentLoaded listener...');
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[Debug] DOMContentLoaded fired, calling App.init()...');
     App.init();
 });
 

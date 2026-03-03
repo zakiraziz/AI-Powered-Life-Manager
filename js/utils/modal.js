@@ -1,40 +1,54 @@
-// ===== MODAL SYSTEM =====
+/**
+ * Advanced Modal System
+ * Provides customizable modals with animations and accessibility
+ */
 
-const ModalManager = {
-    modals: new Map(),
-    zIndex: 1000,
-
-    create(config) {
+const ModalManager = (function() {
+    'use strict';
+    
+    const modals = new Map();
+    let zIndex = 1000;
+    
+    /**
+     * Create a new modal
+     * @param {Object} config - Modal configuration
+     * @returns {HTMLElement} Modal element
+     */
+    const create = (config) => {
         const {
             id,
             title = '',
             content = '',
-            size = 'medium', // small, medium, large, full
+            size = 'medium',
             closable = true,
             closeOnOverlay = true,
             closeOnEscape = true,
             showCloseButton = true,
             buttons = [],
             onOpen = null,
-            onClose = null
+            onClose = null,
+            className = ''
         } = config;
-
+        
         // Remove existing modal with same id
-        if (this.modals.has(id)) {
-            this.close(id);
+        if (modals.has(id)) {
+            close(id);
         }
-
+        
         // Create modal element
         const modal = document.createElement('div');
-        modal.className = 'modal-wrapper';
+        modal.className = `modal-wrapper ${className}`;
         modal.id = id;
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', `${id}-title`);
         modal.style.cssText = `
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: ${this.zIndex++};
+            z-index: ${zIndex++};
             display: flex;
             align-items: center;
             justify-content: center;
@@ -42,7 +56,7 @@ const ModalManager = {
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         `;
-
+        
         // Size classes
         const sizeClasses = {
             small: 'max-width: 400px',
@@ -50,18 +64,20 @@ const ModalManager = {
             large: 'max-width: 800px',
             full: 'max-width: 95vw; max-height: 95vh'
         };
-
+        
         // Build modal HTML
         let buttonsHtml = '';
         if (buttons.length > 0) {
             buttonsHtml = '<div class="modal-buttons">' + buttons.map(btn => `
-                <button class="modal-btn ${btn.primary ? 'primary' : ''}" 
-                        data-action="${btn.id}">
-                    ${btn.icon ? `<i class="${btn.icon}"></i> ` : ''}${btn.text}
+                <button class="modal-btn ${btn.primary ? 'primary' : ''} ${btn.className || ''}" 
+                        data-action="${btn.id}"
+                        aria-label="${btn.text}">
+                    ${btn.icon ? `<i class="${btn.icon}"></i>` : ''}
+                    <span>${btn.text}</span>
                 </button>
             `).join('') + '</div>';
         }
-
+        
         modal.innerHTML = `
             <div class="modal-overlay" style="
                 position: absolute;
@@ -74,7 +90,7 @@ const ModalManager = {
             "></div>
             <div class="modal-content" style="
                 ${sizeClasses[size]}
-                background: var(--bg-secondary, #1e293b);
+                background: var(--bg-secondary);
                 border-radius: 16px;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
                 position: relative;
@@ -83,15 +99,16 @@ const ModalManager = {
                 overflow-y: auto;
                 transform: scale(0.9);
                 transition: transform 0.3s;
+                border: 1px solid var(--border-color);
             ">
                 ${showCloseButton ? `
-                    <button class="modal-close" style="
+                    <button class="modal-close" aria-label="Close" style="
                         position: absolute;
                         top: 16px;
                         right: 16px;
                         background: transparent;
                         border: none;
-                        color: var(--text-secondary, #94a3b8);
+                        color: var(--text-secondary);
                         font-size: 24px;
                         cursor: pointer;
                         padding: 8px;
@@ -102,13 +119,13 @@ const ModalManager = {
                 ` : ''}
                 ${title ? `<div class="modal-header" style="
                     padding: 20px 24px;
-                    border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.1));
+                    border-bottom: 1px solid var(--border-color);
                 ">
-                    <h2 style="
+                    <h2 id="${id}-title" style="
                         margin: 0;
                         font-size: 1.25rem;
                         font-weight: 600;
-                        color: var(--text-primary, #fff);
+                        color: var(--text-primary);
                     ">${SecurityUtils.escapeHtml(title)}</h2>
                 </div>` : ''}
                 <div class="modal-body" style="
@@ -116,75 +133,81 @@ const ModalManager = {
                 ">${content}</div>
                 ${buttonsHtml ? `<div class="modal-footer" style="
                     padding: 16px 24px;
-                    border-top: 1px solid var(--border-color, rgba(255,255,255,0.1));
+                    border-top: 1px solid var(--border-color);
                     display: flex;
                     justify-content: flex-end;
                     gap: 12px;
                 ">${buttonsHtml}</div>` : ''}
             </div>
         `;
-
+        
         // Add styles
-        this.addStyles();
-
+        addStyles();
+        
         // Add event listeners
         const overlay = modal.querySelector('.modal-overlay');
         const closeBtn = modal.querySelector('.modal-close');
-
-        if (closeable && closeOnOverlay) {
-            overlay.addEventListener('click', () => this.close(id));
+        
+        if (closable && closeOnOverlay) {
+            overlay.addEventListener('click', () => close(id));
         }
-
-        if (closeable && showCloseButton) {
-            closeBtn.addEventListener('click', () => this.close(id));
+        
+        if (closable && showCloseButton && closeBtn) {
+            closeBtn.addEventListener('click', () => close(id));
         }
-
+        
         // Button handlers
         buttons.forEach(btn => {
             const btnElement = modal.querySelector(`[data-action="${btn.id}"]`);
             if (btnElement && btn.onClick) {
-                btnElement.addEventListener('click', (e) => btn.onClick(e, { close: () => this.close(id) }));
+                btnElement.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    btn.onClick(e, { close: () => close(id) });
+                });
             }
         });
-
+        
         // Escape key handler
-        if (closeable && closeOnEscape) {
+        if (closable && closeOnEscape) {
             const escapeHandler = (e) => {
                 if (e.key === 'Escape') {
-                    this.close(id);
+                    close(id);
                     document.removeEventListener('keydown', escapeHandler);
                 }
             };
             modal.escapeHandler = escapeHandler;
             document.addEventListener('keydown', escapeHandler);
         }
-
+        
         // Store modal reference
-        this.modals.set(id, {
+        modals.set(id, {
             element: modal,
             config,
             onClose
         });
-
+        
         // Add to DOM
         document.body.appendChild(modal);
-
+        
         // Trigger open animation
         requestAnimationFrame(() => {
             modal.style.opacity = '1';
             modal.style.visibility = 'visible';
             modal.querySelector('.modal-content').style.transform = 'scale(1)';
         });
-
+        
         // Call onOpen callback
         if (onOpen) {
             onOpen(modal);
         }
-
+        
         return modal;
-    },
-
-    addStyles() {
+    };
+    
+    /**
+     * Add modal styles
+     */
+    const addStyles = () => {
         if (document.getElementById('modal-system-styles')) return;
         
         const style = document.createElement('style');
@@ -197,35 +220,48 @@ const ModalManager = {
                 font-weight: 500;
                 cursor: pointer;
                 transition: all 0.2s;
-                background: var(--bg-primary, #334155);
-                color: var(--text-primary, #fff);
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
             }
             .modal-btn:hover {
-                background: var(--border-color, #475569);
+                background: var(--bg-hover);
             }
             .modal-btn.primary {
-                background: var(--accent-primary, #6366f1);
+                background: var(--accent-gradient);
                 color: white;
             }
             .modal-btn.primary:hover {
-                background: var(--accent-secondary, #4f46e5);
+                opacity: 0.9;
+            }
+            .modal-btn:focus-visible {
+                outline: 2px solid var(--accent-primary);
+                outline-offset: 2px;
             }
         `;
         document.head.appendChild(style);
-    },
-
-    close(id) {
-        const modalData = this.modals.get(id);
+    };
+    
+    /**
+     * Close a modal
+     * @param {string} id - Modal ID
+     */
+    const close = (id) => {
+        const modalData = modals.get(id);
         if (!modalData) return;
-
+        
         const { element, onClose } = modalData;
         const content = element.querySelector('.modal-content');
-
+        
         // Animate out
         element.style.opacity = '0';
         element.style.visibility = 'hidden';
-        content.style.transform = 'scale(0.9)';
-
+        if (content) {
+            content.style.transform = 'scale(0.9)';
+        }
+        
         // Remove after animation
         setTimeout(() => {
             if (element.escapeHandler) {
@@ -234,24 +270,32 @@ const ModalManager = {
             if (element.parentNode) {
                 element.parentNode.removeChild(element);
             }
-            this.modals.delete(id);
+            modals.delete(id);
             
             if (onClose) {
                 onClose();
             }
         }, 300);
-    },
-
-    closeAll() {
-        this.modals.forEach((_, id) => this.close(id));
-    },
-
-    // Helper methods for common modals
-    alert(message, type = 'info') {
+    };
+    
+    /**
+     * Close all modals
+     */
+    const closeAll = () => {
+        modals.forEach((_, id) => close(id));
+    };
+    
+    /**
+     * Show alert modal
+     * @param {string} message - Alert message
+     * @param {string} type - Alert type
+     * @returns {Promise} Resolves when closed
+     */
+    const alert = (message, type = 'info') => {
         return new Promise((resolve) => {
             const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
             
-            this.create({
+            create({
                 id: 'alert-' + Date.now(),
                 title: type.charAt(0).toUpperCase() + type.slice(1),
                 content: `<p style="font-size: 1rem; color: var(--text-secondary);">${SecurityUtils.escapeHtml(message)}</p>`,
@@ -264,11 +308,16 @@ const ModalManager = {
                 }]
             });
         });
-    },
-
-    confirm(message) {
+    };
+    
+    /**
+     * Show confirm modal
+     * @param {string} message - Confirmation message
+     * @returns {Promise} Resolves with boolean
+     */
+    const confirm = (message) => {
         return new Promise((resolve) => {
-            this.create({
+            create({
                 id: 'confirm-' + Date.now(),
                 title: 'Confirm',
                 content: `<p style="font-size: 1rem; color: var(--text-secondary);">${SecurityUtils.escapeHtml(message)}</p>`,
@@ -288,13 +337,19 @@ const ModalManager = {
                 ]
             });
         });
-    },
-
-    prompt(title, defaultValue = '') {
+    };
+    
+    /**
+     * Show prompt modal
+     * @param {string} title - Prompt title
+     * @param {string} defaultValue - Default value
+     * @returns {Promise} Resolves with input value or null
+     */
+    const prompt = (title, defaultValue = '') => {
         return new Promise((resolve) => {
             const inputId = 'prompt-input-' + Date.now();
             
-            this.create({
+            create({
                 id: 'prompt-' + Date.now(),
                 title,
                 content: `
@@ -337,8 +392,18 @@ const ModalManager = {
                 ]
             });
         });
-    }
-};
+    };
+    
+    // Public API
+    return {
+        create,
+        close,
+        closeAll,
+        alert,
+        confirm,
+        prompt
+    };
+})();
 
 // Global helper functions
 window.ModalManager = ModalManager;

@@ -2714,6 +2714,37 @@ const App = {
             console.log('[Debug] ChartManager initialized');
         }, 100);
         
+        // Initialize AI Assistant
+        console.log('[Debug] Initializing AIAssistant...');
+        if (typeof AIAssistant !== 'undefined') {
+            AIAssistant.init();
+            console.log('[Debug] AIAssistant initialized');
+        }
+        
+        // Initialize Gamification
+        console.log('[Debug] Initializing Gamification...');
+        if (typeof Gamification !== 'undefined') {
+            Gamification.init();
+            console.log('[Debug] Gamification initialized');
+        }
+        
+        // Initialize Keyboard Shortcuts
+        console.log('[Debug] Initializing KeyboardShortcuts...');
+        if (typeof KeyboardShortcuts !== 'undefined') {
+            KeyboardShortcuts.init();
+            console.log('[Debug] KeyboardShortcuts initialized');
+        }
+        
+        // Initialize Widget Dashboard
+        console.log('[Debug] Initializing WidgetDashboard...');
+        if (typeof WidgetDashboard !== 'undefined') {
+            WidgetDashboard.init();
+            console.log('[Debug] WidgetDashboard initialized');
+        }
+        
+        // Initialize QuickActions
+        console.log('[Debug] QuickActions ready');
+        
         this.initialized = true;
         console.log('LifeOS initialized');
         

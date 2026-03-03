@@ -2185,15 +2185,21 @@ const AuthManager = {
     },
 
     setupFormListeners() {
+        console.log('[Debug] setupFormListeners called');
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
         
+        console.log('[Debug] loginForm:', loginForm ? 'Found' : 'Not found');
+        console.log('[Debug] signupForm:', signupForm ? 'Found' : 'Not found');
+        
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+            console.log('[Debug] Login form event listener attached');
         }
         
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => this.handleSignup(e));
+            console.log('[Debug] Signup form event listener attached');
         }
         
         // Password strength checker
@@ -2241,18 +2247,31 @@ const AuthManager = {
     },
 
     handleAuthState() {
+        console.log('[Debug] handleAuthState called, currentUser:', this.currentUser);
+        
         const authContainer = document.getElementById('authContainer');
         const mainDashboard = document.getElementById('mainDashboard');
         const userMenuContainer = document.getElementById('userMenuContainer');
         
+        console.log('[Debug] authContainer:', authContainer ? 'Found' : 'Not found');
+        console.log('[Debug] mainDashboard:', mainDashboard ? 'Found' : 'Not found');
+        
         if (this.currentUser) {
-            if (authContainer) authContainer.classList.add('hidden');
-            if (mainDashboard) mainDashboard.classList.remove('hidden');
+            console.log('[Debug] User logged in, showing dashboard');
+            if (authContainer) {
+                authContainer.classList.add('hidden');
+                console.log('[Debug] Added hidden to authContainer');
+            }
+            if (mainDashboard) {
+                mainDashboard.classList.remove('hidden');
+                console.log('[Debug] Removed hidden from mainDashboard');
+            }
             if (userMenuContainer) userMenuContainer.style.display = 'block';
             
             this.updateWelcomeMessage();
             this.updateUserUI();
         } else {
+            console.log('[Debug] No user, showing auth');
             if (authContainer) authContainer.classList.remove('hidden');
             if (mainDashboard) mainDashboard.classList.add('hidden');
             if (userMenuContainer) userMenuContainer.style.display = 'none';
@@ -2348,12 +2367,15 @@ const AuthManager = {
     },
 
     async handleSignup(event) {
+        console.log('[Debug] handleSignup called');
         event.preventDefault();
 
         const name = document.getElementById('signupName')?.value.trim();
         const email = document.getElementById('signupEmail')?.value.trim();
         const password = document.getElementById('signupPassword')?.value;
         const confirmPassword = document.getElementById('signupConfirmPassword')?.value;
+        
+        console.log('[Debug] Signup - name:', name, 'email:', email);
 
         if (!name || !email || !password) {
             NotificationSystem.error('Please fill in all fields');
@@ -2415,6 +2437,8 @@ const AuthManager = {
             this.currentUser = safeUser;
             this.sessionToken = token;
             
+            console.log('[Debug] Signup successful, currentUser:', this.currentUser);
+            
             // Save session
             this.saveSession(safeUser, token, true);
             
@@ -2430,6 +2454,7 @@ const AuthManager = {
             NotificationSystem.success('Account created! Welcome to LifeOS!', 3000);
             
         } catch (error) {
+            console.error('[Debug] Signup error:', error);
             NotificationSystem.error(error.message || 'Registration failed');
         }
     },
@@ -3559,7 +3584,53 @@ window.showTasksForDate = showTasksForDate;
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    App.init();
+    console.log('[Debug] DOM Content Loaded, initializing app...');
+    
+    try {
+        App.init();
+        console.log('[Debug] App initialized successfully');
+    } catch(e) {
+        console.error('[Debug] Error initializing App:', e);
+    }
+    
+    // Initialize new feature modules
+    try {
+        if (window.HabitTracker) {
+            HabitTracker.init();
+            console.log('[Debug] HabitTracker initialized');
+        }
+    } catch(e) {
+        console.error('[Debug] Error initializing HabitTracker:', e);
+    }
+    
+    try {
+        if (window.PomodoroTimer) {
+            PomodoroTimer.init();
+            console.log('[Debug] PomodoroTimer initialized');
+        }
+    } catch(e) {
+        console.error('[Debug] Error initializing PomodoroTimer:', e);
+    }
+    
+    try {
+        if (window.NotesManager) {
+            NotesManager.init();
+            console.log('[Debug] NotesManager initialized');
+        }
+    } catch(e) {
+        console.error('[Debug] Error initializing NotesManager:', e);
+    }
+    
+    try {
+        if (window.WaterTracker) {
+            WaterTracker.init();
+            console.log('[Debug] WaterTracker initialized');
+        }
+    } catch(e) {
+        console.error('[Debug] Error initializing WaterTracker:', e);
+    }
+    
+    console.log('[Debug] All modules initialized');
 });
 
 // Initialize service worker

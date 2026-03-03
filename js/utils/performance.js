@@ -1,34 +1,53 @@
-// ===== PERFORMANCE UTILITIES =====
+/**
+ * Performance Utilities Module
+ * Provides debounce, throttle, lazy loading, and performance monitoring
+ */
 
-const PerformanceUtils = {
-    // Debounce function
-    debounce(func, wait = 300) {
+const PerformanceUtils = (function() {
+    'use strict';
+    
+    /**
+     * Debounce function to limit execution rate
+     * @param {Function} func - Function to debounce
+     * @param {number} wait - Wait time in ms
+     * @returns {Function} Debounced function
+     */
+    const debounce = (func, wait = 300) => {
         let timeout;
         return function executedFunction(...args) {
             const later = () => {
                 clearTimeout(timeout);
-                func(...args);
+                func.apply(this, args);
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
-    },
-
-    // Throttle function
-    throttle(func, limit = 300) {
+    };
+    
+    /**
+     * Throttle function to limit execution rate
+     * @param {Function} func - Function to throttle
+     * @param {number} limit - Limit in ms
+     * @returns {Function} Throttled function
+     */
+    const throttle = (func, limit = 300) => {
         let inThrottle;
         return function executedFunction(...args) {
             if (!inThrottle) {
-                func(...args);
+                func.apply(this, args);
                 inThrottle = true;
                 setTimeout(() => inThrottle = false, limit);
             }
         };
-    },
-
-    // Lazy load images
-    lazyLoadImages() {
+    };
+    
+    /**
+     * Lazy load images using Intersection Observer
+     */
+    const lazyLoadImages = () => {
         const images = document.querySelectorAll('img[data-src]');
+        
+        if (images.length === 0) return;
         
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -39,23 +58,41 @@ const PerformanceUtils = {
                     observer.unobserve(img);
                 }
             });
+        }, {
+            rootMargin: '50px'
         });
-
+        
         images.forEach(img => imageObserver.observe(img));
-    },
-
-    // Preload critical resources
-    preloadCritical() {
+    };
+    
+    /**
+     * Preload critical resources
+     */
+    const preloadCritical = () => {
         // Preload fonts
         const fontLink = document.createElement('link');
         fontLink.rel = 'preload';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap';
+        fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap';
         fontLink.as = 'style';
         document.head.appendChild(fontLink);
-    },
-
-    // Measure LCP (Largest Contentful Paint)
-    measureLCP() {
+        
+        // Preconnect to external domains
+        const preconnectGoogle = document.createElement('link');
+        preconnectGoogle.rel = 'preconnect';
+        preconnectGoogle.href = 'https://fonts.googleapis.com';
+        document.head.appendChild(preconnectGoogle);
+        
+        const preconnectGstatic = document.createElement('link');
+        preconnectGstatic.rel = 'preconnect';
+        preconnectGstatic.href = 'https://fonts.gstatic.com';
+        preconnectGstatic.crossOrigin = 'anonymous';
+        document.head.appendChild(preconnectGstatic);
+    };
+    
+    /**
+     * Measure Largest Contentful Paint (LCP)
+     */
+    const measureLCP = () => {
         if ('PerformanceObserver' in window) {
             try {
                 const observer = new PerformanceObserver((list) => {
@@ -68,10 +105,12 @@ const PerformanceUtils = {
                 console.log('LCP not supported');
             }
         }
-    },
-
-    // Measure FID (First Input Delay)
-    measureFID() {
+    };
+    
+    /**
+     * Measure First Input Delay (FID)
+     */
+    const measureFID = () => {
         if ('PerformanceObserver' in window) {
             try {
                 const observer = new PerformanceObserver((list) => {
@@ -84,10 +123,12 @@ const PerformanceUtils = {
                 console.log('FID not supported');
             }
         }
-    },
-
-    // Measure CLS (Cumulative Layout Shift)
-    measureCLS() {
+    };
+    
+    /**
+     * Measure Cumulative Layout Shift (CLS)
+     */
+    const measureCLS = () => {
         if ('PerformanceObserver' in window) {
             try {
                 let clsValue = 0;
@@ -104,24 +145,26 @@ const PerformanceUtils = {
                 console.log('CLS not supported');
             }
         }
-    },
-
-    // Initialize performance monitoring
-    init() {
-        if (process.env.NODE_ENV === 'development') {
-            console.log('Performance monitoring enabled');
-        }
-        
+    };
+    
+    /**
+     * Initialize performance monitoring
+     */
+    const initPerformanceMonitoring = () => {
         // Only measure in production or when explicitly enabled
-        if (window.location.hostname !== 'localhost') {
-            this.measureLCP();
-            this.measureFID();
-            this.measureCLS();
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            measureLCP();
+            measureFID();
+            measureCLS();
         }
-    },
-
-    // Optimize DOM updates with requestAnimationFrame
-    rafUpdate(callback) {
+    };
+    
+    /**
+     * Optimize DOM updates with requestAnimationFrame
+     * @param {Function} callback - Function to optimize
+     * @returns {Function} Optimized function
+     */
+    const rafUpdate = (callback) => {
         let scheduled = false;
         return function(...args) {
             if (!scheduled) {
@@ -132,39 +175,36 @@ const PerformanceUtils = {
                 });
             }
         };
-    },
-
-    // Memory management - cleanup event listeners
-    cleanup() {
-        // Remove unused event listeners
-        const cleanupEvents = ['dataChanged'];
-        cleanupEvents.forEach(event => {
-            const handlers = window.getEventListeners?.(window) || [];
-            // Note: getEventListeners is a Chrome devtools feature
-            // In production, use a custom event manager
-        });
-    },
-
-    // Cache DOM queries
-    cacheDom() {
+    };
+    
+    /**
+     * Cache DOM queries for better performance
+     * @returns {Object} Cached elements
+     */
+    const cacheDom = () => {
         const cache = {};
         const elements = {
             taskInput: 'taskInput',
             taskList: 'taskList',
             balance: 'balance',
             streakCount: 'streakCount',
-            completionRate: 'completionRate'
+            completionRate: 'completionRate',
+            productivityChart: 'productivityChart',
+            moodChart: 'moodChart',
+            expenseChart: 'expenseChart'
         };
-
+        
         for (const [key, id] of Object.entries(elements)) {
             cache[key] = document.getElementById(id);
         }
-
+        
         return cache;
-    },
-
-    // Initialize intersection observer for animations
-    initIntersectionObserver() {
+    };
+    
+    /**
+     * Initialize intersection observer for animations
+     */
+    const initIntersectionObserver = () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -173,15 +213,44 @@ const PerformanceUtils = {
                 }
             });
         }, { threshold: 0.1 });
-
+        
         document.querySelectorAll('.animate-on-scroll').forEach(el => {
             observer.observe(el);
         });
-    }
-};
+    };
+    
+    /**
+     * Memory management - cleanup event listeners
+     */
+    const cleanup = () => {
+        // Remove old event listeners
+        const handlers = window._eventHandlers || [];
+        handlers.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        window._eventHandlers = [];
+    };
+    
+    // Public API
+    return {
+        debounce,
+        throttle,
+        lazyLoadImages,
+        preloadCritical,
+        rafUpdate,
+        cacheDom,
+        initIntersectionObserver,
+        initPerformanceMonitoring,
+        cleanup
+    };
+})();
 
 // Export
 window.PerformanceUtils = PerformanceUtils;
 
 // Auto init
-document.addEventListener('DOMContentLoaded', () => PerformanceUtils.init());
+document.addEventListener('DOMContentLoaded', () => {
+    PerformanceUtils.preloadCritical();
+    PerformanceUtils.initPerformanceMonitoring();
+    PerformanceUtils.lazyLoadImages();
+});

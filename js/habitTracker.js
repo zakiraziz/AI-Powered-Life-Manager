@@ -18,6 +18,97 @@ const HabitTracker = {
         console.log('[HabitTracker] Initialized');
     },
 
+    // Render full habits page
+    render() {
+        this.loadHabits();
+        const today = new Date().toISOString().split('T')[0];
+        let html = `
+            <div class="habits-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-check-double"></i> Habit Tracker</h2>
+                    <button class="btn btn-primary" onclick="ModalManager.open('habitModal')">
+                        <i class="fas fa-plus"></i> Add Habit
+                    </button>
+                </div>
+                <div class="habits-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <div class="stat-value">${this.getTodayStats().completed}</div>
+                        <div class="stat-label">Completed Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line" style="color: #10b981;"></i>
+                        <div class="stat-value">${this.getTodayStats().total}</div>
+                        <div class="stat-label">Total Habits</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy" style="color: #6366f1;"></i>
+                        <div class="stat-value">${this.getBestStreak()}</div>
+                        <div class="stat-label">Best Streak</div>
+                    </div>
+                </div>
+                <div class="habits-list">
+        `;
+
+        if (this.habits.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <i class="fas fa-check-double" style="font-size: 48px; color: var(--text-tertiary);"></i>
+                    <p>No habits yet. Create your first habit to start tracking!</p>
+                    <button class="btn btn-primary" onclick="ModalManager.open('habitModal')">
+                        <i class="fas fa-plus"></i> Create First Habit
+                    </button>
+                </div>
+            `;
+        } else {
+            this.habits.forEach(habit => {
+                const isCompletedToday = habit.completions[today] && habit.completions[today] >= habit.target;
+                html += `
+                    <div class="habit-card ${isCompletedToday ? 'completed' : ''}">
+                        <div class="habit-icon">${habit.icon}</div>
+                        <div class="habit-info">
+                            <h3>${habit.name}</h3>
+                            <span class="habit-target">Target: ${habit.target} ${habit.unit}</span>
+                            <span class="habit-streak"><i class="fas fa-fire"></i> ${habit.streak} day streak</span>
+                        </div>
+                        <div class="habit-progress">
+                            <div class="progress-circle ${isCompletedToday ? 'complete' : ''}">
+                                ${habit.completions[today] || 0}/${habit.target}
+                            </div>
+                        </div>
+                        <button class="habit-check-btn ${isCompletedToday ? 'checked' : ''}" 
+                                onclick="HabitTracker.toggleHabit('${habit.id}')">
+                            <i class="fas fa-${isCompletedToday ? 'check' : 'plus'}"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        html += `</div></div>`;
+
+        // Render to pageContent
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+    },
+
+    getBestStreak() {
+        let best = 0;
+        this.habits.forEach(h => {
+            if (h.bestStreak > best) best = h.bestStreak;
+        });
+        return best;
+    },
+
+    // Toggle habit for today (called from UI)
+    toggleHabit(habitId) {
+        const today = new Date().toISOString().split('T')[0];
+        this.toggleHabitCompletion(habitId, today);
+        this.render(); // Re-render the page
+    },
+
     loadHabits() {
         const stored = DataManager.get(DataManager.STORAGE_KEYS.HABITS, []);
         if (stored.length === 0) {
@@ -49,7 +140,7 @@ const HabitTracker = {
             streak: 0,
             bestStreak: 0
         };
-        
+
         this.habits.push(newHabit);
         this.saveHabits();
         NotificationSystem.success('Habit added! 🎯', 2000);
@@ -61,7 +152,7 @@ const HabitTracker = {
         if (!habit) return;
 
         const dateKey = date || new Date().toISOString().split('T')[0];
-        
+
         if (habit.completions[dateKey]) {
             delete habit.completions[dateKey];
             this.updateStreak(habit);
@@ -72,7 +163,7 @@ const HabitTracker = {
             };
             this.updateStreak(habit);
         }
-        
+
         this.saveHabits();
     },
 
@@ -82,13 +173,13 @@ const HabitTracker = {
         if (!habit) return;
 
         const dateKey = new Date().toISOString().split('T')[0];
-        
+
         if (!habit.completions[dateKey]) {
             habit.completions[dateKey] = { count: 0, timestamp: new Date().toISOString() };
         }
-        
+
         habit.completions[dateKey].count += amount;
-        
+
         // Check if target reached
         if (habit.completions[dateKey].count >= habit.target) {
             this.updateStreak(habit);
@@ -97,21 +188,21 @@ const HabitTracker = {
                 NotificationSystem.success(habit.name + ' goal reached! 🔥', 2000);
             }
         }
-        
+
         this.saveHabits();
     },
 
     updateStreak(habit) {
         const today = new Date().toISOString().split('T')[0];
         const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-        
+
         if (habit.completions[today]) {
             // Check if yesterday was completed
             if (habit.completions[yesterday] || habit.streak === 0) {
                 // Continue or start streak
                 let currentStreak = 0;
                 let checkDate = new Date();
-                
+
                 while (true) {
                     const checkKey = checkDate.toISOString().split('T')[0];
                     if (habit.completions[checkKey] && habit.completions[checkKey].count >= habit.target) {
@@ -124,7 +215,7 @@ const HabitTracker = {
                         break;
                     }
                 }
-                
+
                 habit.streak = currentStreak;
                 if (currentStreak > habit.bestStreak) {
                     habit.bestStreak = currentStreak;
@@ -138,20 +229,20 @@ const HabitTracker = {
     getHabitProgress(habitId) {
         const habit = this.habits.find(h => h.id === habitId);
         if (!habit) return 0;
-        
+
         const today = new Date().toISOString().split('T')[0];
         const completion = habit.completions[today];
-        
+
         if (!completion) return 0;
         return Math.min(100, Math.round((completion.count / habit.target) * 100));
     },
 
     getTodayStats() {
         const today = new Date().toISOString().split('T')[0];
-        const completed = this.habits.filter(h => 
+        const completed = this.habits.filter(h =>
             h.completions[today] && h.completions[today].count >= h.target
         ).length;
-        
+
         return {
             total: this.habits.length,
             completed: completed,
@@ -160,9 +251,9 @@ const HabitTracker = {
     },
 
     deleteHabit(habitId) {
-        ModalManager.confirm('Delete this habit?').then(function(confirmed) {
+        ModalManager.confirm('Delete this habit?').then(function (confirmed) {
             if (confirmed) {
-                HabitTracker.habits = HabitTracker.habits.filter(function(h) { return h.id !== habitId; });
+                HabitTracker.habits = HabitTracker.habits.filter(function (h) { return h.id !== habitId; });
                 HabitTracker.saveHabits();
                 NotificationSystem.info('Habit deleted', 2000);
             }
@@ -174,8 +265,8 @@ const HabitTracker = {
         if (!container) return;
 
         const today = new Date().toISOString().split('T')[0];
-        
-        container.innerHTML = this.habits.map(function(habit) {
+
+        container.innerHTML = this.habits.map(function (habit) {
             const progress = HabitTracker.getHabitProgress(habit.id);
             const isCompleted = progress >= 100;
             const completion = habit.completions[today];
@@ -209,7 +300,7 @@ const HabitTracker = {
         const completedEl = document.getElementById('habitsCompleted');
         const totalEl = document.getElementById('habitsTotal');
         const percentEl = document.getElementById('habitsPercent');
-        
+
         if (completedEl) completedEl.textContent = stats.completed;
         if (totalEl) totalEl.textContent = stats.total;
         if (percentEl) percentEl.textContent = stats.percentage + '%';
@@ -236,7 +327,7 @@ const HabitTracker = {
         const iconInput = document.getElementById('habitIconInput');
         const targetInput = document.getElementById('habitTargetInput');
         const unitInput = document.getElementById('habitUnitInput');
-        
+
         const name = nameInput ? nameInput.value : '';
         const icon = iconInput ? iconInput.value : '⭐';
         const target = targetInput ? targetInput.value : 1;
@@ -249,7 +340,7 @@ const HabitTracker = {
 
         this.addHabit(name, icon, target, unit);
         this.hideAddHabitModal();
-        
+
         // Clear inputs
         if (nameInput) nameInput.value = '';
         if (iconInput) iconInput.value = '⭐';
@@ -257,21 +348,21 @@ const HabitTracker = {
         if (unitInput) unitInput.value = 'time';
     },
 
-    setupEventListeners: function() {
-        document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners: function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const addBtn = document.getElementById('addHabitBtn');
             if (addBtn) {
-                addBtn.addEventListener('click', function() { HabitTracker.showAddHabitModal(); });
+                addBtn.addEventListener('click', function () { HabitTracker.showAddHabitModal(); });
             }
-            
+
             const saveBtn = document.getElementById('saveHabitBtn');
             if (saveBtn) {
-                saveBtn.addEventListener('click', function() { HabitTracker.handleAddHabit(); });
+                saveBtn.addEventListener('click', function () { HabitTracker.handleAddHabit(); });
             }
-            
+
             const closeBtn = document.getElementById('closeHabitModal');
             if (closeBtn) {
-                closeBtn.addEventListener('click', function() { HabitTracker.hideAddHabitModal(); });
+                closeBtn.addEventListener('click', function () { HabitTracker.hideAddHabitModal(); });
             }
         });
     }

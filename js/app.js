@@ -2,7 +2,7 @@
 // Combined and optimized version of all modules
 console.log('[Debug] app.js is loading...');
 
-window.onerror = function(msg, url, line, col, error) {
+window.onerror = function (msg, url, line, col, error) {
     console.error('[Debug] Global error:', msg, 'at line', line);
     return false;
 };
@@ -43,10 +43,10 @@ const SecurityUtils = {
         const hasLowerCase = /[a-z]/.test(password);
         const hasNumbers = /\d/.test(password);
         const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-        
+
         const score = [password.length >= minLength, hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar]
             .filter(Boolean).length;
-        
+
         return {
             isValid: score >= 3,
             score: score,
@@ -136,11 +136,11 @@ const SecurityUtils = {
             const now = Date.now();
             const attempts = this.attempts.get(key) || [];
             const recentAttempts = attempts.filter(time => now - time < this.windowMs);
-            
+
             if (recentAttempts.length >= this.maxAttempts) {
                 return false;
             }
-            
+
             recentAttempts.push(now);
             this.attempts.set(key, recentAttempts);
             return true;
@@ -171,7 +171,7 @@ const DataManager = {
         try {
             const data = localStorage.getItem(key);
             if (!data) return defaultValue;
-            
+
             const parsed = JSON.parse(data);
             return parsed;
         } catch (error) {
@@ -184,12 +184,12 @@ const DataManager = {
     set(key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
-            
+
             // Dispatch custom event for cross-module communication
-            window.dispatchEvent(new CustomEvent('dataChanged', { 
-                detail: { key, data: value } 
+            window.dispatchEvent(new CustomEvent('dataChanged', {
+                detail: { key, data: value }
             }));
-            
+
             return true;
         } catch (error) {
             console.error(`Error saving ${key}:`, error);
@@ -201,8 +201,8 @@ const DataManager = {
     remove(key) {
         try {
             localStorage.removeItem(key);
-            window.dispatchEvent(new CustomEvent('dataChanged', { 
-                detail: { key, data: null } 
+            window.dispatchEvent(new CustomEvent('dataChanged', {
+                detail: { key, data: null }
             }));
             return true;
         } catch (error) {
@@ -271,7 +271,7 @@ const DataManager = {
     // Import data with validation
     importData(data, options = {}) {
         const { merge = true } = options;
-        
+
         if (!data || typeof data !== 'object') {
             throw new Error('Invalid import data');
         }
@@ -284,8 +284,8 @@ const DataManager = {
                     if (merge) {
                         // Merge with existing data
                         const existing = this.get(storageKey, []);
-                        const imported = Array.isArray(existing) 
-                            ? [...existing, ...data[key]] 
+                        const imported = Array.isArray(existing)
+                            ? [...existing, ...data[key]]
                             : { ...existing, ...data[key] };
                         this.set(storageKey, imported);
                     } else {
@@ -408,7 +408,7 @@ const NotificationSystem = {
 
         const notification = document.createElement('div');
         notification.className = `notification-toast ${type}`;
-        
+
         // Get icon based on type
         const icons = {
             success: '✓',
@@ -439,7 +439,7 @@ const NotificationSystem = {
 
     dismiss(notification) {
         if (!notification || !notification.parentNode) return;
-        
+
         notification.classList.add('removing');
         setTimeout(() => {
             if (notification.parentNode) {
@@ -675,7 +675,7 @@ const ModalManager = {
                 element.parentNode.removeChild(element);
             }
             this.modals.delete(id);
-            
+
             if (onClose) {
                 onClose();
             }
@@ -731,7 +731,7 @@ const ModalManager = {
     prompt(title, defaultValue = '') {
         return new Promise((resolve) => {
             const inputId = 'prompt-input-' + Date.now();
-            
+
             this.create({
                 id: 'prompt-' + Date.now(),
                 title,
@@ -808,7 +808,7 @@ const PerformanceUtils = {
     // Lazy load images
     lazyLoadImages() {
         const images = document.querySelectorAll('img[data-src]');
-        
+
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -826,7 +826,7 @@ const PerformanceUtils = {
     // Optimize DOM updates with requestAnimationFrame
     rafUpdate(callback) {
         let scheduled = false;
-        return function(...args) {
+        return function (...args) {
             if (!scheduled) {
                 scheduled = true;
                 requestAnimationFrame(() => {
@@ -1110,7 +1110,7 @@ let currentLanguage = localStorage.getItem('language') || 'en';
 
 function changeLanguage(lang) {
     currentLanguage = lang;
-    
+
     // Update active button
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -1118,7 +1118,7 @@ function changeLanguage(lang) {
             btn.classList.add('active');
         }
     });
-    
+
     // Update all translatable elements
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -1132,7 +1132,7 @@ function changeLanguage(lang) {
             }
         }
     });
-    
+
     // Update welcome message with name if logged in
     if (AuthManager && AuthManager.currentUser) {
         const welcomeEl = document.querySelector('[data-i18n="welcomeMessage"]');
@@ -1140,7 +1140,7 @@ function changeLanguage(lang) {
             welcomeEl.textContent = `${translations[lang].welcomeMessage}, ${AuthManager.currentUser.name}! 👋`;
         }
     }
-    
+
     localStorage.setItem('language', lang);
 }
 
@@ -1155,7 +1155,7 @@ const ChartManager = {
     init() {
         this.initializeCharts();
         this.loadData();
-        
+
         // Listen for data changes
         window.addEventListener('dataChanged', (e) => {
             if (e.detail.key === DataManager.STORAGE_KEYS.TASKS) {
@@ -1183,10 +1183,10 @@ const ChartManager = {
     initializeProductivityChart() {
         const canvas = document.getElementById('productivityChart');
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-        
+
         this.charts.productivity = new Chart(ctx, {
             type: 'line',
             data: {
@@ -1212,10 +1212,10 @@ const ChartManager = {
     initializeMoodChart() {
         const canvas = document.getElementById('moodChart');
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-        
+
         this.charts.mood = new Chart(ctx, {
             type: 'line',
             data: {
@@ -1249,10 +1249,10 @@ const ChartManager = {
     initializeExpenseChart() {
         const canvas = document.getElementById('expenseChart');
         if (!canvas) return;
-        
+
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-        
+
         this.charts.expense = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -1350,20 +1350,20 @@ const ChartManager = {
     getProductivityData() {
         const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
         const data = [];
-        
+
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toISOString().split('T')[0];
-            
-            const count = tasks.filter(t => 
-                t.completed && t.completedAt && 
+
+            const count = tasks.filter(t =>
+                t.completed && t.completedAt &&
                 t.completedAt.startsWith(dateStr)
             ).length;
-            
+
             data.push(count);
         }
-        
+
         return data;
     },
 
@@ -1371,14 +1371,14 @@ const ChartManager = {
         const moods = DataManager.get(DataManager.STORAGE_KEYS.MOODS, []);
         const moodMap = { '😊': 5, '😄': 5, '😐': 3, '😔': 1, '😤': 2, '😴': 2, '🤔': 3, '🥰': 5 };
         const data = [];
-        
+
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toISOString().split('T')[0];
-            
+
             const dayMoods = moods.filter(m => m.date === dateStr);
-            
+
             if (dayMoods.length > 0) {
                 const avg = dayMoods.reduce((sum, m) => sum + (moodMap[m.mood] || 3), 0) / dayMoods.length;
                 data.push(Math.round(avg));
@@ -1386,18 +1386,18 @@ const ChartManager = {
                 data.push(0);
             }
         }
-        
+
         return data;
     },
 
     getExpenseData() {
         const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
-        
+
         // Only consider expenses (not income)
         const expenses = transactions.filter(t => t.category !== 'income');
-        
+
         const categories = ['food', 'transport', 'entertainment', 'bills', 'other'];
-        
+
         return categories.map(cat => {
             return expenses
                 .filter(t => t.category === cat)
@@ -1475,7 +1475,7 @@ const MoodManager = {
     logMood(mood, journal = '', gratitude = '') {
         // Get mood info
         const moodInfo = this.moodTypes.find(m => m.emoji === mood);
-        
+
         const moodEntry = {
             id: `mood_${Date.now()}_${SecurityUtils.generateToken(6)}`,
             date: new Date().toISOString().split('T')[0],
@@ -1488,7 +1488,7 @@ const MoodManager = {
 
         // Check if already logged today
         const existingToday = this.moods.find(m => m.date === moodEntry.date);
-        
+
         if (existingToday) {
             ModalManager.confirm('You already logged your mood today. Update it?').then(confirmed => {
                 if (confirmed) {
@@ -1535,7 +1535,7 @@ const MoodManager = {
         const weekAgoStr = weekAgo.toISOString().split('T')[0];
 
         const weekMoods = this.moods.filter(m => m.date >= weekAgoStr && m.date <= today);
-        
+
         if (weekMoods.length === 0) return 0;
 
         const sum = weekMoods.reduce((acc, m) => acc + (m.moodValue || 3), 0);
@@ -1549,7 +1549,7 @@ const MoodManager = {
         const monthAgoStr = monthAgo.toISOString().split('T')[0];
 
         const monthMoods = this.moods.filter(m => m.date >= monthAgoStr && m.date <= today);
-        
+
         if (monthMoods.length === 0) return 0;
 
         const sum = monthMoods.reduce((acc, m) => acc + (m.moodValue || 3), 0);
@@ -1558,7 +1558,7 @@ const MoodManager = {
 
     getMoodTrend() {
         const recent = this.moods.slice(-7);
-        
+
         if (recent.length < 2) return 'stable';
 
         const firstHalf = recent.slice(0, Math.floor(recent.length / 2));
@@ -1568,7 +1568,7 @@ const MoodManager = {
         const secondAvg = secondHalf.reduce((s, m) => s + (m.moodValue || 3), 0) / secondHalf.length;
 
         const diff = secondAvg - firstAvg;
-        
+
         if (diff > 0.5) return 'improving';
         if (diff < -0.5) return 'declining';
         return 'stable';
@@ -1602,7 +1602,7 @@ const MoodManager = {
 
     showHistory() {
         const moods = this.getMoods();
-        
+
         const content = moods.length > 0
             ? moods.map(m => {
                 const moodInfo = this.moodTypes.find(t => t.emoji === m.mood);
@@ -1705,10 +1705,10 @@ const TaskManager = {
     init() {
         // Load tasks from DataManager
         this.tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
-        
+
         // Setup event listeners
         this.setupEventListeners();
-        
+
         // Initial render
         this.render();
     },
@@ -1716,14 +1716,14 @@ const TaskManager = {
     setupEventListeners() {
         const searchInput = document.getElementById('taskSearch');
         const filterSelect = document.getElementById('taskFilter');
-        
+
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 this.filters.search = e.target.value.toLowerCase();
                 this.render();
             });
         }
-        
+
         if (filterSelect) {
             filterSelect.addEventListener('change', (e) => {
                 this.filters.status = e.target.value;
@@ -1737,14 +1737,14 @@ const TaskManager = {
         const category = document.getElementById('taskCategory');
         const priority = document.getElementById('taskPriority');
         const deadline = document.getElementById('taskDeadline');
-        
+
         if (!taskInput || !category || !priority) {
             NotificationSystem.error('Form elements not found');
             return;
         }
 
         const title = taskInput.value.trim();
-        
+
         if (!title) {
             NotificationSystem.warning('Please enter a task title');
             return;
@@ -1771,17 +1771,17 @@ const TaskManager = {
         this.tasks.push(task);
         this.save();
         this.render();
-        
+
         // Clear input
         taskInput.value = '';
         taskInput.focus();
-        
+
         // Update productivity stats
         updateProductivityStats();
-        
+
         // Update streak
         updateStreak();
-        
+
         // Update gamification
         updateGamification();
 
@@ -1790,18 +1790,18 @@ const TaskManager = {
 
     toggleTask(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
-        
+
         if (task) {
             task.completed = !task.completed;
             task.updatedAt = new Date().toISOString();
-            
+
             if (task.completed) {
                 task.completedAt = new Date().toISOString();
             }
-            
+
             this.save();
             this.render();
-            
+
             updateProductivityStats();
 
             if (task.completed) {
@@ -1816,9 +1816,9 @@ const TaskManager = {
                 this.tasks = this.tasks.filter(t => t.id !== taskId);
                 this.save();
                 this.render();
-                
+
                 updateProductivityStats();
-                
+
                 NotificationSystem.info('Task deleted', 2000);
             }
         });
@@ -1826,7 +1826,7 @@ const TaskManager = {
 
     editTask(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
-        
+
         if (!task) return;
 
         ModalManager.prompt('Edit Task', task.title).then(newTitle => {
@@ -1836,13 +1836,13 @@ const TaskManager = {
                     NotificationSystem.error('Invalid characters in task title');
                     return;
                 }
-                
+
                 task.title = SecurityUtils.sanitizeInput(newTitle.trim());
                 task.updatedAt = new Date().toISOString();
-                
+
                 this.save();
                 this.render();
-                
+
                 NotificationSystem.success('Task updated', 2000);
             }
         });
@@ -1850,22 +1850,22 @@ const TaskManager = {
 
     getFilteredTasks() {
         let filtered = [...this.tasks];
-        
+
         // Search filter
         if (this.filters.search) {
-            filtered = filtered.filter(task => 
+            filtered = filtered.filter(task =>
                 task.title.toLowerCase().includes(this.filters.search) ||
                 task.category.toLowerCase().includes(this.filters.search)
             );
         }
-        
+
         // Status filter
         if (this.filters.status === 'completed') {
             filtered = filtered.filter(task => task.completed);
         } else if (this.filters.status === 'pending') {
             filtered = filtered.filter(task => !task.completed);
         }
-        
+
         return filtered;
     },
 
@@ -1895,10 +1895,10 @@ const TaskManager = {
             const li = document.createElement('li');
             li.className = `task-item ${task.completed ? 'completed' : ''}`;
             li.setAttribute('data-id', task.id);
-            
+
             const priorityClass = `priority-${task.priority}`;
             const deadline = task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline';
-            
+
             li.innerHTML = `
                 <div class="task-checkbox" onclick="TaskManager.toggleTask('${task.id}')">
                     ${task.completed ? '✓' : ''}
@@ -1914,7 +1914,7 @@ const TaskManager = {
                     <i class="fas fa-trash" onclick="TaskManager.deleteTask('${task.id}')" style="color: var(--danger); cursor: pointer;" title="Delete"></i>
                 </div>
             `;
-            
+
             taskList.appendChild(li);
         });
 
@@ -1923,7 +1923,7 @@ const TaskManager = {
         document.getElementById('pendingTasks').textContent = stats.pending;
         document.getElementById('completedTasks').textContent = stats.completed;
         document.getElementById('overdueTasks').textContent = stats.overdue;
-        
+
         // Update progress bar
         const progressPercent = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
         document.getElementById('taskProgressPercent').textContent = `${progressPercent}%`;
@@ -1939,14 +1939,14 @@ const TaskManager = {
         const total = this.tasks.length;
         const completed = this.tasks.filter(t => t.completed).length;
         const pending = total - completed;
-        
+
         // Overdue tasks
         const today = new Date().toISOString().split('T')[0];
         const overdue = this.tasks.filter(t => !t.completed && t.deadline && t.deadline < today).length;
-        
+
         const byCategory = {};
         const byPriority = { high: 0, medium: 0, low: 0 };
-        
+
         this.tasks.forEach(task => {
             byCategory[task.category] = (byCategory[task.category] || 0) + 1;
             byPriority[task.priority]++;
@@ -2015,7 +2015,7 @@ const TransactionManager = {
         this.transactions.push(transaction);
         this.save();
         this.updateBalance();
-        
+
         // Update expense chart
         if (window.ChartManager) {
             ChartManager.updateExpenseChart();
@@ -2031,11 +2031,11 @@ const TransactionManager = {
                 this.transactions = this.transactions.filter(t => t.id !== id);
                 this.save();
                 this.updateBalance();
-                
+
                 if (window.ChartManager) {
                     ChartManager.updateExpenseChart();
                 }
-                
+
                 NotificationSystem.info('Transaction deleted', 2000);
             }
         });
@@ -2060,10 +2060,10 @@ const TransactionManager = {
     updateBalance() {
         const { balance } = this.getBalance();
         const balanceEl = document.getElementById('balance');
-        
+
         if (balanceEl) {
             balanceEl.textContent = `$${balance.toFixed(2)}`;
-            
+
             // Color coding
             if (balance < 0) {
                 balanceEl.style.color = 'var(--danger)';
@@ -2079,8 +2079,8 @@ const TransactionManager = {
 
     showTransactionHistory() {
         const transactions = this.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        const content = transactions.length > 0 
+
+        const content = transactions.length > 0
             ? transactions.map(t => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
                     <div>
@@ -2115,7 +2115,7 @@ const TransactionManager = {
         const total = expenses.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
         const breakdown = {};
-        
+
         expenses.forEach(t => {
             breakdown[t.category] = (breakdown[t.category] || 0) + Math.abs(t.amount);
         });
@@ -2182,10 +2182,10 @@ const AuthManager = {
     init() {
         // Load user from secure storage
         this.loadSession();
-        
+
         // Handle auth state on page load
         this.handleAuthState();
-        
+
         // Setup event listeners for forms
         this.setupFormListeners();
     },
@@ -2193,15 +2193,15 @@ const AuthManager = {
     setupFormListeners() {
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
-        
+
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         }
-        
+
         if (signupForm) {
             signupForm.addEventListener('submit', (e) => this.handleSignup(e));
         }
-        
+
         // Password strength checker
         const passwordInput = document.getElementById('signupPassword');
         if (passwordInput) {
@@ -2212,21 +2212,21 @@ const AuthManager = {
     checkPasswordStrength(password) {
         const strengthBar = document.getElementById('passwordStrength');
         const strengthText = document.getElementById('passwordStrengthText');
-        
+
         if (!strengthBar || !strengthText) return;
-        
+
         let strength = 0;
         let color = 'var(--danger)';
         let text = 'Weak';
-        
+
         if (password.length >= 8) strength += 25;
         if (password.match(/[a-z]+/)) strength += 25;
         if (password.match(/[A-Z]+/)) strength += 25;
         if (password.match(/[0-9]+/)) strength += 25;
         if (password.match(/[$@#&!]+/)) strength += 25;
-        
+
         strength = Math.min(strength, 100);
-        
+
         if (strength <= 25) {
             color = 'var(--danger)';
             text = 'Weak';
@@ -2240,7 +2240,7 @@ const AuthManager = {
             color = 'var(--success)';
             text = 'Strong';
         }
-        
+
         strengthBar.style.width = strength + '%';
         strengthBar.style.background = color;
         strengthText.textContent = text;
@@ -2250,12 +2250,12 @@ const AuthManager = {
         const authContainer = document.getElementById('authContainer');
         const mainDashboard = document.getElementById('mainDashboard');
         const userMenuContainer = document.getElementById('userMenuContainer');
-        
+
         if (this.currentUser) {
             if (authContainer) authContainer.classList.add('hidden');
             if (mainDashboard) mainDashboard.classList.remove('hidden');
             if (userMenuContainer) userMenuContainer.style.display = 'block';
-            
+
             this.updateWelcomeMessage();
             this.updateUserUI();
         } else {
@@ -2267,17 +2267,17 @@ const AuthManager = {
 
     updateUserUI() {
         if (!this.currentUser) return;
-        
+
         const userNameEl = document.getElementById('userName');
         const dropdownUserName = document.getElementById('dropdownUserName');
         const dropdownUserEmail = document.getElementById('dropdownUserEmail');
         const userAvatar = document.getElementById('userAvatar');
         const userIcon = document.getElementById('userIcon');
-        
+
         if (userNameEl) userNameEl.textContent = this.currentUser.name || this.currentUser.email.split('@')[0];
         if (dropdownUserName) dropdownUserName.textContent = this.currentUser.name || this.currentUser.email;
         if (dropdownUserEmail) dropdownUserEmail.textContent = this.currentUser.email;
-        
+
         if (this.currentUser.avatar && userAvatar) {
             userAvatar.src = this.currentUser.avatar;
             userAvatar.style.display = 'block';
@@ -2312,10 +2312,10 @@ const AuthManager = {
         try {
             // Get users from storage
             const users = DataManager.get(DataManager.STORAGE_KEYS.USER + '_list', []);
-            
+
             // Find user by email
             const user = users.find(u => u.email === email);
-            
+
             if (!user) {
                 NotificationSystem.error('Invalid email or password');
                 return;
@@ -2335,19 +2335,19 @@ const AuthManager = {
             const { passwordHash: _, ...safeUser } = user;
             this.currentUser = safeUser;
             this.sessionToken = token;
-            
+
             // Save session
             this.saveSession(safeUser, token, remember);
-            
+
             // Update UI
             this.handleAuthState();
-            
+
             // Clear form
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
-            
+
             NotificationSystem.success('Login successful! Welcome back!', 3000);
-            
+
         } catch (error) {
             NotificationSystem.error(error.message || 'Login failed');
         }
@@ -2390,7 +2390,7 @@ const AuthManager = {
 
         try {
             const users = DataManager.get(DataManager.STORAGE_KEYS.USER + '_list', []);
-            
+
             // Check if email exists
             if (users.some(u => u.email === email)) {
                 NotificationSystem.error('Email already registered');
@@ -2420,21 +2420,21 @@ const AuthManager = {
             const { passwordHash: _, ...safeUser } = newUser;
             this.currentUser = safeUser;
             this.sessionToken = token;
-            
+
             // Save session
             this.saveSession(safeUser, token, true);
-            
+
             // Update UI
             this.handleAuthState();
-            
+
             // Clear forms
             document.getElementById('signupName').value = '';
             document.getElementById('signupEmail').value = '';
             document.getElementById('signupPassword').value = '';
             document.getElementById('signupConfirmPassword').value = '';
-            
+
             NotificationSystem.success('Account created! Welcome to LifeOS!', 3000);
-            
+
         } catch (error) {
             NotificationSystem.error(error.message || 'Registration failed');
         }
@@ -2446,36 +2446,36 @@ const AuthManager = {
             token: token,
             expiresAt: Date.now() + (remember ? 30 : 7) * 24 * 60 * 60 * 1000 // 30 or 7 days
         };
-        
+
         SecurityUtils.secureStorage.set(DataManager.STORAGE_KEYS.USER, sessionData);
     },
 
     loadSession() {
         const session = SecurityUtils.secureStorage.get(DataManager.STORAGE_KEYS.USER);
-        
+
         if (session) {
             // Check if session is expired
             if (session.expiresAt && Date.now() > session.expiresAt) {
                 this.logout();
                 return false;
             }
-            
+
             this.currentUser = session.user;
             this.sessionToken = session.token;
             return true;
         }
-        
+
         return false;
     },
 
     logout() {
         this.currentUser = null;
         this.sessionToken = null;
-        
+
         SecurityUtils.secureStorage.remove(DataManager.STORAGE_KEYS.USER);
-        
+
         this.handleAuthState();
-        
+
         NotificationSystem.info('Logged out successfully');
     },
 
@@ -2487,7 +2487,7 @@ const AuthManager = {
         event?.stopPropagation();
         const dropdown = document.getElementById('userDropdown');
         if (!dropdown) return;
-        
+
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
     },
 
@@ -2510,13 +2510,13 @@ const AuthManager = {
 
     viewProfile() {
         if (!this.currentUser) return;
-        
+
         // Get user stats
         const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
         const completedTasks = tasks.filter(t => t.completed).length;
         const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
         const moods = DataManager.get(DataManager.STORAGE_KEYS.MOODS, []);
-        
+
         ModalManager.create({
             id: 'profile-modal',
             title: 'My Profile',
@@ -2562,7 +2562,7 @@ const AuthManager = {
         const currentLang = localStorage.getItem('language') || 'en';
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         const notifications = localStorage.getItem('notifications_enabled') !== 'false';
-        
+
         ModalManager.create({
             id: 'settings-modal',
             title: 'Settings',
@@ -2671,91 +2671,91 @@ const App = {
 
     init() {
         if (this.initialized) return;
-        
+
         try {
-        // Initialize all modules
-        console.log('[Debug] Initializing DataManager...');
-        DataManager.initialize();
-        console.log('[Debug] DataManager initialized');
-        
-        console.log('[Debug] Initializing NotificationSystem...');
-        NotificationSystem.init();
-        console.log('[Debug] NotificationSystem initialized');
-        
-        // Initialize theme
-        console.log('[Debug] Initializing theme...');
-        this.initializeTheme();
-        console.log('[Debug] Theme initialized');
-        
-        // Initialize components
-        console.log('[Debug] Initializing components...');
-        this.initializeComponents();
-        console.log('[Debug] Components initialized');
-        
-        // Initialize event listeners
-        console.log('[Debug] Initializing event listeners...');
-        this.initializeEventListeners();
-        console.log('[Debug] Event listeners initialized');
-        
-        // Initialize PWA
-        console.log('[Debug] Initializing PWA...');
-        this.initializePWA();
-        console.log('[Debug] PWA initialized');
-        
-        // Initialize auth
-        console.log('[Debug] Initializing AuthManager...');
-        AuthManager.init();
-        console.log('[Debug] AuthManager initialized');
-        
-        // Initialize charts after auth
-        setTimeout(() => {
-            console.log('[Debug] Initializing ChartManager...');
-            ChartManager.init();
-            console.log('[Debug] ChartManager initialized');
-        }, 100);
-        
-        // Initialize AI Assistant
-        console.log('[Debug] Initializing AIAssistant...');
-        if (typeof AIAssistant !== 'undefined') {
-            AIAssistant.init();
-            console.log('[Debug] AIAssistant initialized');
-        }
-        
-        // Initialize Gamification
-        console.log('[Debug] Initializing Gamification...');
-        if (typeof Gamification !== 'undefined') {
-            Gamification.init();
-            console.log('[Debug] Gamification initialized');
-        }
-        
-        // Initialize Keyboard Shortcuts
-        console.log('[Debug] Initializing KeyboardShortcuts...');
-        if (typeof KeyboardShortcuts !== 'undefined') {
-            KeyboardShortcuts.init();
-            console.log('[Debug] KeyboardShortcuts initialized');
-        }
-        
-        // Initialize Widget Dashboard
-        console.log('[Debug] Initializing WidgetDashboard...');
-        if (typeof WidgetDashboard !== 'undefined') {
-            WidgetDashboard.init();
-            console.log('[Debug] WidgetDashboard initialized');
-        }
-        
-        // Initialize QuickActions
-        console.log('[Debug] QuickActions ready');
-        
-        this.initialized = true;
-        console.log('LifeOS initialized');
-        
-        // Hide loading screen
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
+            // Initialize all modules
+            console.log('[Debug] Initializing DataManager...');
+            DataManager.initialize();
+            console.log('[Debug] DataManager initialized');
+
+            console.log('[Debug] Initializing NotificationSystem...');
+            NotificationSystem.init();
+            console.log('[Debug] NotificationSystem initialized');
+
+            // Initialize theme
+            console.log('[Debug] Initializing theme...');
+            this.initializeTheme();
+            console.log('[Debug] Theme initialized');
+
+            // Initialize components
+            console.log('[Debug] Initializing components...');
+            this.initializeComponents();
+            console.log('[Debug] Components initialized');
+
+            // Initialize event listeners
+            console.log('[Debug] Initializing event listeners...');
+            this.initializeEventListeners();
+            console.log('[Debug] Event listeners initialized');
+
+            // Initialize PWA
+            console.log('[Debug] Initializing PWA...');
+            this.initializePWA();
+            console.log('[Debug] PWA initialized');
+
+            // Initialize auth
+            console.log('[Debug] Initializing AuthManager...');
+            AuthManager.init();
+            console.log('[Debug] AuthManager initialized');
+
+            // Initialize charts after auth
             setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }
+                console.log('[Debug] Initializing ChartManager...');
+                ChartManager.init();
+                console.log('[Debug] ChartManager initialized');
+            }, 100);
+
+            // Initialize AI Assistant
+            console.log('[Debug] Initializing AIAssistant...');
+            if (typeof AIAssistant !== 'undefined') {
+                AIAssistant.init();
+                console.log('[Debug] AIAssistant initialized');
+            }
+
+            // Initialize Gamification
+            console.log('[Debug] Initializing Gamification...');
+            if (typeof Gamification !== 'undefined') {
+                Gamification.init();
+                console.log('[Debug] Gamification initialized');
+            }
+
+            // Initialize Keyboard Shortcuts
+            console.log('[Debug] Initializing KeyboardShortcuts...');
+            if (typeof KeyboardShortcuts !== 'undefined') {
+                KeyboardShortcuts.init();
+                console.log('[Debug] KeyboardShortcuts initialized');
+            }
+
+            // Initialize Widget Dashboard
+            console.log('[Debug] Initializing WidgetDashboard...');
+            if (typeof WidgetDashboard !== 'undefined') {
+                WidgetDashboard.init();
+                console.log('[Debug] WidgetDashboard initialized');
+            }
+
+            // Initialize QuickActions
+            console.log('[Debug] QuickActions ready');
+
+            this.initialized = true;
+            console.log('LifeOS initialized');
+
+            // Hide loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
         } catch (error) {
             console.error('[Debug] Error during initialization:', error);
             // Still try to hide loading screen on error
@@ -2775,7 +2775,7 @@ const App = {
         this.theme = theme;
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
-        
+
         // Update icon
         const themeIcon = document.querySelector('.theme-toggle i');
         if (themeIcon) {
@@ -2792,12 +2792,12 @@ const App = {
     initializeComponents() {
         // Time zones
         this.updateTimeZones();
-        
+
         // Calendar
         if (typeof generateCalendar === 'function') {
             generateCalendar();
         }
-        
+
         // Cards animation
         this.animateCards();
     },
@@ -2805,14 +2805,14 @@ const App = {
     initializeEventListeners() {
         // Listen for hash changes
         window.addEventListener('hashchange', () => this.handleNavigation());
-        
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
-        
+
         // Handle online/offline status
         window.addEventListener('online', () => this.handleOnlineStatus());
         window.addEventListener('offline', () => this.handleOfflineStatus());
-        
+
         // Listen for data changes
         window.addEventListener('dataChanged', (e) => {
             console.log('Data changed:', e.detail.key);
@@ -2822,25 +2822,25 @@ const App = {
         document.addEventListener('click', (event) => {
             const dropdown = document.getElementById('userDropdown');
             const userMenuBtn = document.getElementById('userMenuBtn');
-            
+
             if (dropdown && dropdown.style.display === 'block') {
                 if (!dropdown.contains(event.target) && !userMenuBtn.contains(event.target)) {
                     dropdown.style.display = 'none';
                 }
             }
-            
+
             const quickDropdown = document.getElementById('quickActionsDropdown');
             const quickBtn = document.querySelector('.quick-actions-btn');
-            
+
             if (quickDropdown && quickDropdown.style.display === 'block') {
                 if (!quickDropdown.contains(event.target) && !quickBtn.contains(event.target)) {
                     quickDropdown.style.display = 'none';
                 }
             }
-            
+
             const notifDropdown = document.getElementById('notificationsDropdown');
             const notifBtn = document.querySelector('.notifications-btn');
-            
+
             if (notifDropdown && notifDropdown.style.display === 'block') {
                 if (!notifDropdown.contains(event.target) && !notifBtn.contains(event.target)) {
                     notifDropdown.style.display = 'none';
@@ -2856,14 +2856,14 @@ const App = {
             const taskInput = document.getElementById('taskInput');
             if (taskInput) taskInput.focus();
         }
-        
+
         // Ctrl/Cmd + / for search
         if ((e.ctrlKey || e.metaKey) && e.key === '/') {
             e.preventDefault();
             const searchInput = document.getElementById('taskSearch');
             if (searchInput) searchInput.focus();
         }
-        
+
         // Escape to close modals
         if (e.key === 'Escape') {
             ModalManager.closeAll();
@@ -2883,7 +2883,7 @@ const App = {
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
-            
+
             setTimeout(() => {
                 card.style.transition = 'opacity 0.5s, transform 0.5s';
                 card.style.opacity = '1';
@@ -2905,7 +2905,7 @@ const App = {
             timezones.forEach(tz => {
                 const el = document.getElementById(tz.id);
                 if (el) {
-                    el.textContent = new Date().toLocaleTimeString('en-US', { 
+                    el.textContent = new Date().toLocaleTimeString('en-US', {
                         timeZone: tz.zone,
                         hour: '2-digit',
                         minute: '2-digit',
@@ -2947,7 +2947,7 @@ const App = {
 
     addTimezoneToDisplay(emoji, name, zone) {
         ModalManager.close('add-timezone-modal');
-        
+
         const grid = document.getElementById('timezoneGrid');
         if (!grid) return;
 
@@ -2965,24 +2965,24 @@ const App = {
             const timeEl = newTimezone.querySelector('.timezone-time');
             const dateEl = newTimezone.querySelector('.timezone-date');
             if (timeEl) {
-                timeEl.textContent = new Date().toLocaleTimeString('en-US', { 
+                timeEl.textContent = new Date().toLocaleTimeString('en-US', {
                     timeZone: zone,
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
                     hour12: true
                 });
-                dateEl.textContent = new Date().toLocaleDateString('en-US', { 
+                dateEl.textContent = new Date().toLocaleDateString('en-US', {
                     timeZone: zone,
                     month: 'short',
                     day: 'numeric'
                 });
             }
         };
-        
+
         updateNewTime();
         setInterval(updateNewTime, 1000);
-        
+
         NotificationSystem.success('Timezone added!');
     },
 
@@ -2991,7 +2991,7 @@ const App = {
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             this.pwaDeferredPrompt = e;
-            
+
             const installPrompt = document.getElementById('installPrompt');
             if (installPrompt) {
                 installPrompt.classList.remove('hidden');
@@ -3015,13 +3015,13 @@ const App = {
         }
 
         this.pwaDeferredPrompt.prompt();
-        
+
         this.pwaDeferredPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
                 console.log('User accepted install');
             }
             this.pwaDeferredPrompt = null;
-            
+
             const installPrompt = document.getElementById('installPrompt');
             if (installPrompt) {
                 installPrompt.classList.add('hidden');
@@ -3041,14 +3041,14 @@ const App = {
     handleNavigation() {
         // Get current hash (default to dashboard)
         let hash = window.location.hash.slice(1) || 'dashboard';
-        
+
         // Validate hash against allowed pages
-        const allowedPages = ['dashboard', 'tasks', 'analytics', 'calendar', 'expenses', 'team', 'ai-assistant'];
+        const allowedPages = ['dashboard', 'tasks', 'analytics', 'calendar', 'expenses', 'team', 'ai-assistant', 'habits', 'pomodoro', 'notes', 'journal'];
         if (!allowedPages.includes(hash)) {
             hash = 'dashboard';
             window.location.hash = 'dashboard';
         }
-        
+
         // Update nav links active state
         document.querySelectorAll('.nav-links a').forEach(link => {
             const linkHash = link.getAttribute('href').slice(1);
@@ -3058,27 +3058,112 @@ const App = {
                 link.classList.remove('active');
             }
         });
-        
+
+        // Handle special pages with dedicated render functions
+        if (hash === 'habits') {
+            this.showPageContent();
+            this.showHabits();
+            return;
+        } else if (hash === 'pomodoro') {
+            this.showPageContent();
+            this.showPomodoro();
+            return;
+        } else if (hash === 'notes') {
+            this.showPageContent();
+            this.showNotes();
+            return;
+        } else if (hash === 'journal') {
+            this.showPageContent();
+            this.showJournal();
+            return;
+        } else if (hash === 'team') {
+            this.showPageContent();
+            this.showTeam();
+            return;
+        } else if (hash === 'ai-assistant') {
+            this.showPageContent();
+            this.showAIAssistant();
+            return;
+        } else if (hash === 'tasks') {
+            this.showPageContent();
+            this.showTasks();
+            return;
+        } else if (hash === 'analytics') {
+            this.showPageContent();
+            this.showAnalytics();
+            return;
+        } else if (hash === 'calendar') {
+            this.showPageContent();
+            this.showCalendar();
+            return;
+        } else if (hash === 'expenses') {
+            this.showPageContent();
+            this.showExpenses();
+            return;
+        }
+
         // Show/hide cards based on page
         this.showPage(hash);
     },
-    
+
+    // Show page content area and hide dashboard cards
+    showPageContent() {
+        // Hide all dashboard cards
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach(card => {
+            card.style.display = 'none';
+            card.classList.add('hidden');
+        });
+        // Hide welcome section
+        const welcomeSection = document.querySelector('.welcome-section');
+        if (welcomeSection) {
+            welcomeSection.style.display = 'none';
+        }
+        // Clear page content and make it visible
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.style.display = 'block';
+        }
+    },
+
+    // Show welcome section and dashboard cards (for dashboard)
+    showWelcomeAndCards() {
+        // Show welcome section
+        const welcomeSection = document.querySelector('.welcome-section');
+        if (welcomeSection) {
+            welcomeSection.style.display = '';
+        }
+        // Show all cards
+        const cards = document.querySelectorAll('.dashboard-card');
+        cards.forEach(card => {
+            card.style.display = '';
+            card.classList.remove('hidden');
+        });
+        // Hide page content
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.style.display = '';
+            pageContent.innerHTML = '';
+        }
+    },
+
     showPage(page) {
         const cards = document.querySelectorAll('.dashboard-card');
-        
-        // Dashboard shows all cards
+
+        // Dashboard shows all cards and welcome
         if (page === 'dashboard' || page === '') {
+            this.showWelcomeAndCards();
             cards.forEach(card => {
                 card.style.display = '';
                 card.classList.remove('hidden');
             });
             return;
         }
-        
+
         // For other pages, show only matching cards
         cards.forEach(card => {
             const cardPage = card.getAttribute('data-page');
-            
+
             if (cardPage === page) {
                 card.style.display = '';
                 card.classList.remove('hidden');
@@ -3087,7 +3172,7 @@ const App = {
                 card.classList.add('hidden');
             }
         });
-        
+
         // Update page title
         const pageTitles = {
             'dashboard': 'Dashboard',
@@ -3096,9 +3181,13 @@ const App = {
             'calendar': 'Calendar',
             'expenses': 'Expenses',
             'team': 'Team',
-            'ai-assistant': 'AI Assistant'
+            'ai-assistant': 'AI Assistant',
+            'habits': 'Habits',
+            'pomodoro': 'Pomodoro',
+            'notes': 'Notes',
+            'journal': 'Journal'
         };
-        
+
         // Update welcome message based on page
         const welcomeSection = document.querySelector('.welcome-section h1');
         if (welcomeSection && AuthManager.currentUser) {
@@ -3106,7 +3195,7 @@ const App = {
             welcomeSection.textContent = `${translations[lang].welcomeMessage}, ${AuthManager.currentUser.name}! 👋`;
         }
     },
-    
+
     showDashboard() {
         window.location.hash = 'dashboard';
         const authContainer = document.getElementById('authContainer');
@@ -3115,123 +3204,916 @@ const App = {
         if (mainDashboard) {
             mainDashboard.classList.remove('hidden');
         }
-        // Show all cards
-        const cards = document.querySelectorAll('.dashboard-card');
-        cards.forEach(card => {
-            card.style.display = '';
-            card.classList.remove('hidden');
-        });
-        // Update active nav
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === '#dashboard') {
-                link.classList.add('active');
-            }
-        });
+        // Show welcome and cards
+        this.showWelcomeAndCards();
     },
-    
+
     showTasks() {
         window.location.hash = 'tasks';
-        const authContainer = document.getElementById('authContainer');
-        const mainDashboard = document.getElementById('mainDashboard');
-        if (authContainer) authContainer.classList.add('hidden');
-        if (mainDashboard) mainDashboard.classList.remove('hidden');
-        this.showPage('tasks');
+        this.showPageContent();
+
+        // Render full tasks page
+        const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+        const pendingTasks = tasks.filter(t => !t.completed);
+        const completedTasks = tasks.filter(t => t.completed);
+
+        let html = `
+            <div class="tasks-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-tasks"></i> Tasks</h2>
+                    <button class="btn btn-primary" onclick="App.showAddTaskModal()">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+                
+                <div class="tasks-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-list" style="color: #3b82f6;"></i>
+                        <div class="stat-value">${pendingTasks.length}</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        <div class="stat-value">${completedTasks.length}</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <div class="stat-value">${tasks.length}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                
+                <div class="tasks-filters">
+                    <button class="filter-btn active" onclick="App.filterTasks('all')">All</button>
+                    <button class="filter-btn" onclick="App.filterTasks('pending')">Pending</button>
+                    <button class="filter-btn" onclick="App.filterTasks('completed')">Completed</button>
+                </div>
+                
+                <div class="tasks-list">
+        `;
+
+        if (tasks.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <i class="fas fa-tasks" style="font-size: 48px; color: var(--text-tertiary);"></i>
+                    <p>No tasks yet. Create your first task!</p>
+                    <button class="btn btn-primary" onclick="App.showAddTaskModal()">
+                        <i class="fas fa-plus"></i> Create First Task
+                    </button>
+                </div>
+            `;
+        } else {
+            tasks.forEach(task => {
+                const priorityClass = task.priority === 'high' ? 'high' : (task.priority === 'medium' ? 'medium' : 'low');
+                const priorityIcon = task.priority === 'high' ? '🔴' : (task.priority === 'medium' ? '🟡' : '🟢');
+                html += `
+                    <div class="task-item ${task.completed ? 'completed' : ''}" data-status="${task.completed ? 'completed' : 'pending'}">
+                        <div class="task-check">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                                    onchange="TaskManager.toggleTask('${task.id}')">
+                        </div>
+                        <div class="task-content">
+                            <div class="task-title">${task.title}</div>
+                            ${task.description ? `<div class="task-desc">${task.description}</div>` : ''}
+                            <div class="task-meta">
+                                <span class="task-priority ${priorityClass}">${priorityIcon} ${task.priority}</span>
+                                ${task.dueDate ? `<span class="task-date"><i class="fas fa-calendar"></i> ${task.dueDate}</span>` : ''}
+                                <span class="task-category"><i class="fas fa-tag"></i> ${task.category || 'General'}</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn-icon" onclick="TaskManager.editTask('${task.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon" onclick="TaskManager.deleteTask('${task.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        html += `</div></div>`;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
         // Update active nav
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#tasks') link.classList.add('active');
         });
     },
-    
+
+    showAddTaskModal() {
+        ModalManager.create({
+            id: 'addTaskModal',
+            title: 'Add New Task',
+            content: `
+                <div class="form-group">
+                    <label>Task Title</label>
+                    <input type="text" id="taskTitle" placeholder="What needs to be done?" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="taskDesc" rows="3" placeholder="Add more details..." class="form-input"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority" class="form-input">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="taskCategory" class="form-input">
+                            <option value="general">General</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="health">Health</option>
+                            <option value="finance">Finance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="taskDueDate" class="form-input">
+                </div>
+            `,
+            size: 'medium',
+            buttons: [
+                { id: 'cancel', text: 'Cancel', primary: false, onclick: 'ModalManager.close("addTaskModal")' },
+                { id: 'save', text: 'Add Task', primary: true, onclick: 'App.saveNewTask()' }
+            ]
+        });
+    },
+
+    saveNewTask() {
+        const title = document.getElementById('taskTitle')?.value;
+        const description = document.getElementById('taskDesc')?.value;
+        const priority = document.getElementById('taskPriority')?.value;
+        const category = document.getElementById('taskCategory')?.value;
+        const dueDate = document.getElementById('taskDueDate')?.value;
+
+        if (title) {
+            const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+            const newTask = {
+                id: 'task_' + Date.now(),
+                title: title,
+                description: description || '',
+                priority: priority || 'medium',
+                category: category || 'general',
+                dueDate: dueDate || null,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            tasks.unshift(newTask);
+            DataManager.set(DataManager.STORAGE_KEYS.TASKS, tasks);
+            ModalManager.close('addTaskModal');
+            this.showTasks();
+            NotificationSystem.success('Task added!');
+        }
+    },
+
+    filterTasks(filter) {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        const items = document.querySelectorAll('.task-item');
+        items.forEach(item => {
+            if (filter === 'all') {
+                item.style.display = '';
+            } else if (filter === 'pending') {
+                item.style.display = item.dataset.status === 'pending' ? '' : 'none';
+            } else if (filter === 'completed') {
+                item.style.display = item.dataset.status === 'completed' ? '' : 'none';
+            }
+        });
+    },
+
     showAnalytics() {
         window.location.hash = 'analytics';
-        const authContainer = document.getElementById('authContainer');
-        const mainDashboard = document.getElementById('mainDashboard');
-        if (authContainer) authContainer.classList.add('hidden');
-        if (mainDashboard) mainDashboard.classList.remove('hidden');
-        this.showPage('analytics');
+        this.showPageContent();
+
+        // Render full analytics page
+        const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+        const habits = DataManager.get(DataManager.STORAGE_KEYS.HABITS, []);
+        const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
+        const moods = DataManager.get(DataManager.STORAGE_KEYS.MOODS, []);
+
+        const completedTasks = tasks.filter(t => t.completed).length;
+        const totalTasks = tasks.length;
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+        // Calculate streak
+        let streak = 0;
+        const today = new Date();
+        for (let i = 0; i < 30; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            const dayHabits = habits.filter(h => h.completions && h.completions[dateStr]);
+            if (dayHabits.length > 0) streak++;
+            else break;
+        }
+
+        // Calculate total expenses
+        const totalExpenses = transactions.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+
+        // Get mood trends
+        const moodCounts = { happy: 0, neutral: 0, sad: 0 };
+        moods.forEach(m => {
+            if (m.mood === 'happy') moodCounts.happy++;
+            else if (m.mood === 'neutral') moodCounts.neutral++;
+            else if (m.mood === 'sad') moodCounts.sad++;
+        });
+
+        let html = `
+            <div class="analytics-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-line"></i> Analytics</h2>
+                </div>
+                
+                <div class="analytics-overview">
+                    <div class="stat-card large">
+                        <i class="fas fa-tasks" style="color: #3b82f6;"></i>
+                        <div class="stat-value">${completionRate}%</div>
+                        <div class="stat-label">Task Completion</div>
+                        <div class="stat-sub">${completedTasks} of ${totalTasks} tasks</div>
+                    </div>
+                    <div class="stat-card large">
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <div class="stat-value">${streak}</div>
+                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-sub">Keep it going!</div>
+                    </div>
+                    <div class="stat-card large">
+                        <i class="fas fa-coins" style="color: #10b981;"></i>
+                        <div class="stat-value">${totalExpenses.toFixed(0)}</div>
+                        <div class="stat-label">Total Expenses</div>
+                        <div class="stat-sub">${transactions.length} transactions</div>
+                    </div>
+                    <div class="stat-card large">
+                        <i class="fas fa-smile" style="color: #8b5cf6;"></i>
+                        <div class="stat-value">${moods.length}</div>
+                        <div class="stat-label">Mood Entries</div>
+                        <div class="stat-sub">Track your feelings</div>
+                    </div>
+                </div>
+                
+                <div class="analytics-charts">
+                    <div class="chart-card">
+                        <h3><i class="fas fa-chart-pie"></i> Task Status</h3>
+                        <div class="chart-placeholder">
+                            <div class="donut-chart">
+                                <div class="donut-segment" style="--percent: ${completionRate}; --color: #10b981;"></div>
+                                <div class="donut-center">
+                                    <span>${completionRate}%</span>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item"><span class="dot" style="background: #10b981;"></span> Completed (${completedTasks})</div>
+                                <div class="legend-item"><span class="dot" style="background: #6b7280;"></span> Pending (${totalTasks - completedTasks})</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3><i class="fas fa-smile"></i> Mood Distribution</h3>
+                        <div class="mood-bars">
+                            <div class="mood-bar">
+                                <span class="mood-label">😊 Happy</span>
+                                <div class="mood-progress">
+                                    <div class="mood-fill happy" style="width: ${moodCounts.happy ? (moodCounts.happy / moods.length * 100) : 0}%"></div>
+                                </div>
+                                <span class="mood-count">${moodCounts.happy}</span>
+                            </div>
+                            <div class="mood-bar">
+                                <span class="mood-label">😐 Neutral</span>
+                                <div class="mood-progress">
+                                    <div class="mood-fill neutral" style="width: ${moodCounts.neutral ? (moodCounts.neutral / moods.length * 100) : 0}%"></div>
+                                </div>
+                                <span class="mood-count">${moodCounts.neutral}</span>
+                            </div>
+                            <div class="mood-bar">
+                                <span class="mood-label">😢 Sad</span>
+                                <div class="mood-progress">
+                                    <div class="mood-fill sad" style="width: ${moodCounts.sad ? (moodCounts.sad / moods.length * 100) : 0}%"></div>
+                                </div>
+                                <span class="mood-count">${moodCounts.sad}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3><i class="fas fa-list"></i> Recent Activity</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                                <span>${completedTasks} tasks completed</span>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-check-double" style="color: #3b82f6;"></i>
+                                <span>${habits.length} habits tracked</span>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-wallet" style="color: #f59e0b;"></i>
+                                <span>${transactions.length} expenses logged</span>
+                            </div>
+                            <div class="activity-item">
+                                <i class="fas fa-sticky-note" style="color: #8b5cf6;"></i>
+                                <span>Keep up the great work!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#analytics') link.classList.add('active');
         });
     },
-    
+
     showCalendar() {
         window.location.hash = 'calendar';
-        const authContainer = document.getElementById('authContainer');
-        const mainDashboard = document.getElementById('mainDashboard');
-        if (authContainer) authContainer.classList.add('hidden');
-        if (mainDashboard) mainDashboard.classList.remove('hidden');
-        this.showPage('calendar');
+        this.showPageContent();
+
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startDayOfWeek = firstDay.getDay();
+
+        const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+        const habits = DataManager.get(DataManager.STORAGE_KEYS.HABITS, []);
+
+        let calendarDays = '';
+
+        // Empty cells for days before the first day
+        for (let i = 0; i < startDayOfWeek; i++) {
+            calendarDays += '<div class="calendar-day empty"></div>';
+        }
+
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            const dateStr = date.toISOString().split('T')[0];
+            const isToday = dateStr === today.toISOString().split('T')[0];
+
+            // Count tasks for this day
+            const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+
+            // Check if any habit was completed
+            const dayHabits = habits.filter(h => h.completions && h.completions[dateStr]);
+
+            let dayContent = `<span class="day-number">${day}</span>`;
+            if (dayTasks.length > 0) {
+                dayContent += `<span class="day-badge tasks">${dayTasks.length}</span>`;
+            }
+            if (dayHabits.length > 0) {
+                dayContent += `<span class="day-badge habits">✓</span>`;
+            }
+
+            calendarDays += `
+                <div class="calendar-day ${isToday ? 'today' : ''}" onclick="App.showDayDetails('${dateStr}')">
+                    ${dayContent}
+                </div>
+            `;
+        }
+
+        let html = `
+            <div class="calendar-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-calendar"></i> Calendar</h2>
+                    <div class="month-nav">
+                        <button class="btn btn-secondary" onclick="App.previousMonth()"><i class="fas fa-chevron-left"></i></button>
+                        <span class="current-month">${monthNames[currentMonth]} ${currentYear}</span>
+                        <button class="btn btn-secondary" onclick="App.nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="day-name">Sun</div>
+                        <div class="day-name">Mon</div>
+                        <div class="day-name">Tue</div>
+                        <div class="day-name">Wed</div>
+                        <div class="day-name">Thu</div>
+                        <div class="day-name">Fri</div>
+                        <div class="day-name">Sat</div>
+                    </div>
+                    <div class="calendar-grid">
+                        ${calendarDays}
+                    </div>
+                </div>
+                
+                <div class="calendar-legend">
+                    <div class="legend-item"><span class="day-badge tasks">1</span> Tasks due</div>
+                    <div class="legend-item"><span class="day-badge habits">✓</span> Habits completed</div>
+                </div>
+            </div>
+        `;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#calendar') link.classList.add('active');
         });
     },
-    
+
+    showDayDetails(dateStr) {
+        const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
+        const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+
+        let content = `
+            <h3>${new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
+        `;
+
+        if (dayTasks.length === 0) {
+            content += '<p>No tasks due on this day.</p>';
+        } else {
+            content += '<div class="day-tasks">';
+            dayTasks.forEach(task => {
+                content += `
+                    <div class="task-item">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} disabled>
+                        <span>${task.title}</span>
+                    </div>
+                `;
+            });
+            content += '</div>';
+        }
+
+        ModalManager.create({
+            id: 'dayDetailsModal',
+            title: 'Day Details',
+            content: content,
+            size: 'medium',
+            buttons: [{ id: 'close', text: 'Close', primary: true }]
+        });
+    },
+
     showExpenses() {
         window.location.hash = 'expenses';
-        const authContainer = document.getElementById('authContainer');
-        const mainDashboard = document.getElementById('mainDashboard');
-        if (authContainer) authContainer.classList.add('hidden');
-        if (mainDashboard) mainDashboard.classList.remove('hidden');
-        this.showPage('expenses');
+        this.showPageContent();
+
+        const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
+        const totalExpenses = transactions.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+        const categories = {};
+        transactions.forEach(t => {
+            const cat = t.category || 'Other';
+            categories[cat] = (categories[cat] || 0) + parseFloat(t.amount || 0);
+        });
+
+        let html = `
+            <div class="expenses-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-wallet"></i> Expenses</h2>
+                    <button class="btn btn-primary" onclick="App.showAddExpenseModal()">
+                        <i class="fas fa-plus"></i> Add Expense
+                    </button>
+                </div>
+                
+                <div class="expenses-stats">
+                    <div class="stat-card large">
+                        <i class="fas fa-wallet" style="color: #10b981;"></i>
+                        <div class="stat-value">${totalExpenses.toFixed(2)}</div>
+                        <div class="stat-label">Total Expenses</div>
+                        <div class="stat-sub">${transactions.length} transactions</div>
+                    </div>
+                    <div class="stat-card large">
+                        <i class="fas fa-receipt" style="color: #3b82f6;"></i>
+                        <div class="stat-value">${Object.keys(categories).length}</div>
+                        <div class="stat-label">Categories</div>
+                        <div class="stat-sub">Tracked</div>
+                    </div>
+                </div>
+                
+                <div class="expenses-categories">
+                    <h3><i class="fas fa-chart-pie"></i> By Category</h3>
+                    <div class="category-bars">
+        `;
+
+        Object.entries(categories).forEach(([cat, amount]) => {
+            const percent = totalExpenses > 0 ? (amount / totalExpenses * 100) : 0;
+            const color = cat === 'Food' ? '#f59e0b' :
+                cat === 'Transport' ? '#3b82f6' :
+                    cat === 'Shopping' ? '#8b5cf6' :
+                        cat === 'Bills' ? '#ef4444' : '#10b981';
+            html += `
+                <div class="category-bar">
+                    <div class="category-info">
+                        <span class="category-name">${cat}</span>
+                        <span class="category-amount">${amount.toFixed(2)}</span>
+                    </div>
+                    <div class="category-progress">
+                        <div class="category-fill" style="width: ${percent}%; background: ${color};"></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+
+        // Recent transactions
+        html += `
+            <div class="expenses-list">
+                <h3><i class="fas fa-list"></i> Recent Transactions</h3>
+        `;
+
+        if (transactions.length === 0) {
+            html += `
+                <div class="empty-state">
+                    <i class="fas fa-wallet" style="font-size: 48px; color: var(--text-tertiary);"></i>
+                    <p>No expenses yet. Track your first expense!</p>
+                    <button class="btn btn-primary" onclick="App.showAddExpenseModal()">
+                        <i class="fas fa-plus"></i> Add First Expense
+                    </button>
+                </div>
+            `;
+        } else {
+            // Sort by date, newest first
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedTransactions.forEach(t => {
+                const date = new Date(t.date).toLocaleDateString();
+                html += `
+                    <div class="expense-item">
+                        <div class="expense-icon">
+                            <i class="fas fa-${t.category === 'Food' ? 'utensils' :
+                        t.category === 'Transport' ? 'car' :
+                            t.category === 'Shopping' ? 'shopping-bag' :
+                                t.category === 'Bills' ? 'file-invoice' : 'coins'}"></i>
+                        </div>
+                        <div class="expense-details">
+                            <div class="expense-desc">${t.description || t.category}</div>
+                            <div class="expense-meta">
+                                <span>${t.category}</span>
+                                <span>${date}</span>
+                            </div>
+                        </div>
+                        <div class="expense-amount">-${parseFloat(t.amount).toFixed(2)}</div>
+                        <button class="btn-icon" onclick="App.deleteExpense('${t.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        html += `</div></div>`;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === '#expenses') link.classList.add('active');
         });
     },
-    
-    showTeam() {
-        window.location.hash = 'team';
+
+    showAddExpenseModal() {
         ModalManager.create({
-            id: 'team-modal',
-            title: 'Team Collaboration',
+            id: 'addExpenseModal',
+            title: 'Add Expense',
             content: `
-                <div style="text-align: center; padding: 20px;">
-                    <i class="fas fa-users" style="font-size: 48px; color: var(--accent-primary); margin-bottom: 20px;"></i>
-                    <h3>Team Collaboration Coming Soon!</h3>
-                    <p style="color: var(--text-secondary); margin-top: 10px;">Work together with your team members on shared tasks and projects.</p>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="expenseDesc" placeholder="What did you spend on?" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="expenseAmount" placeholder="0.00" step="0.01" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="expenseCategory" class="form-input">
+                        <option value="Food">Food & Dining</option>
+                        <option value="Transport">Transportation</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Bills">Bills & Utilities</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Health">Health</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="expenseDate" value="${new Date().toISOString().split('T')[0]}" class="form-input">
                 </div>
             `,
             size: 'medium',
-            buttons: [{ id: 'close', text: 'Close', primary: true }]
+            buttons: [
+                { id: 'cancel', text: 'Cancel', primary: false, onclick: 'ModalManager.close("addExpenseModal")' },
+                { id: 'save', text: 'Add Expense', primary: true, onclick: 'App.saveExpense()' }
+            ]
         });
     },
-    
+
+    saveExpense() {
+        const desc = document.getElementById('expenseDesc')?.value;
+        const amount = document.getElementById('expenseAmount')?.value;
+        const category = document.getElementById('expenseCategory')?.value;
+        const date = document.getElementById('expenseDate')?.value;
+
+        if (desc && amount) {
+            const transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
+            const newExpense = {
+                id: 'expense_' + Date.now(),
+                description: desc,
+                amount: parseFloat(amount),
+                category: category || 'Other',
+                date: date || new Date().toISOString().split('T')[0],
+                type: 'expense'
+            };
+            transactions.unshift(newExpense);
+            DataManager.set(DataManager.STORAGE_KEYS.TRANSACTIONS, transactions);
+            ModalManager.close('addExpenseModal');
+            this.showExpenses();
+            NotificationSystem.success('Expense added!');
+        }
+    },
+
+    deleteExpense(id) {
+        if (confirm('Delete this expense?')) {
+            let transactions = DataManager.get(DataManager.STORAGE_KEYS.TRANSACTIONS, []);
+            transactions = transactions.filter(t => t.id !== id);
+            DataManager.set(DataManager.STORAGE_KEYS.TRANSACTIONS, transactions);
+            this.showExpenses();
+            NotificationSystem.success('Expense deleted');
+        }
+    },
+
+    showTeam() {
+        window.location.hash = 'team';
+        this.showPageContent();
+
+        let html = `
+            <div class="team-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-users"></i> Team Collaboration</h2>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Invite Member
+                    </button>
+                </div>
+                
+                <div class="team-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-users" style="color: #3b82f6;"></i>
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Team Members</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-tasks" style="color: #10b981;"></i>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Shared Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-comments" style="color: #8b5cf6;"></i>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Messages</div>
+                    </div>
+                </div>
+                
+                <div class="team-content">
+                    <div class="team-card">
+                        <div class="team-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Team Collaboration</h3>
+                        <p>Work together with your team members on shared tasks and projects.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check"></i> Share tasks with team members</li>
+                            <li><i class="fas fa-check"></i> Real-time progress tracking</li>
+                            <li><i class="fas fa-check"></i> Team chat and notifications</li>
+                            <li><i class="fas fa-check"></i> Assign tasks and deadlines</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="NotificationSystem.info('Coming soon!')">
+                            <i class="fas fa-bell"></i> Notify Me When Available
+                        </button>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3>Invite Team Members</h3>
+                        <p>Invite your colleagues to join your team.</p>
+                        <div class="invite-form">
+                            <input type="email" placeholder="Enter email address" class="form-input">
+                            <button class="btn btn-primary">Send Invite</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#team') link.classList.add('active');
+        });
+    },
+
     showAIAssistant() {
         window.location.hash = 'ai-assistant';
-        ModalManager.create({
-            id: 'ai-modal',
-            title: 'AI Assistant',
-            content: `
-                <div style="text-align: center; padding: 20px;">
-                    <i class="fas fa-robot" style="font-size: 48px; color: var(--accent-primary); margin-bottom: 20px;"></i>
-                    <h3>AI Assistant Coming Soon!</h3>
-                    <p style="color: var(--text-secondary); margin-top: 10px;">Get intelligent suggestions and insights powered by AI.</p>
+        this.showPageContent();
+
+        let html = `
+            <div class="ai-page">
+                <div class="page-header">
+                    <h2><i class="fas fa-robot"></i> AI Assistant</h2>
                 </div>
-            `,
-            size: 'medium',
-            buttons: [{ id: 'close', text: 'Close', primary: true }]
+                
+                <div class="ai-content">
+                    <div class="ai-welcome">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>Hello! I'm your AI Assistant</h3>
+                        <p>I can help you with:</p>
+                        <ul class="ai-features">
+                            <li><i class="fas fa-brain"></i> <strong>Smart Suggestions</strong> - Get AI-powered recommendations for tasks and habits</li>
+                            <li><i class="fas fa-chart-line"></i> <strong>Analytics Insights</strong> - Analyze your productivity patterns</li>
+                            <li><i class="fas fa-lightbulb"></i> <strong>Goal Planning</strong> - Help you set and achieve goals</li>
+                            <li><i class="fas fa-balance-scale"></i> <strong>Work-Life Balance</strong> - Suggestions for better balance</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="ai-chat-preview">
+                        <h4><i class="fas fa-comments"></i> Start a Conversation</h4>
+                        <div class="chat-input-container">
+                            <input type="text" placeholder="Ask me anything..." class="chat-input">
+                            <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                        <div class="suggested-questions">
+                            <button class="suggestion-btn">Suggest a morning routine</button>
+                            <button class="suggestion-btn">How can I be more productive?</button>
+                            <button class="suggestion-btn">Help me plan my day</button>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-tools">
+                        <h4><i class="fas fa-tools"></i> AI Tools</h4>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <i class="fas fa-list-ul"></i>
+                                <span>Task Prioritization</span>
+                            </div>
+                            <div class="tool-card">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Schedule Optimization</span>
+                            </div>
+                            <div class="tool-card">
+                                <i class="fas fa-heart"></i>
+                                <span>Wellness Check</span>
+                            </div>
+                            <div class="tool-card">
+                                <i class="fas fa-bullseye"></i>
+                                <span>Goal Setting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = html;
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#ai') link.classList.add('active');
         });
+    },
+
+    showHabits() {
+        window.location.hash = 'habits';
+        // Check if HabitTracker exists and has a render function
+        if (typeof HabitTracker !== 'undefined' && HabitTracker.render) {
+            HabitTracker.render();
+        } else {
+            // Show placeholder if module not loaded
+            this.renderPageContent('habits', `
+                <div class="page-header">
+                    <h2><i class="fas fa-check-double"></i> Habit Tracker</h2>
+                    <button class="btn btn-primary" onclick="ModalManager.open('habitModal')">
+                        <i class="fas fa-plus"></i> Add Habit
+                    </button>
+                </div>
+                <div id="habitsContainer">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading habits...</p>
+                </div>
+            `);
+        }
+    },
+
+    showPomodoro() {
+        window.location.hash = 'pomodoro';
+        // Check if PomodoroTimer exists and has a render function
+        if (typeof PomodoroTimer !== 'undefined' && PomodoroTimer.render) {
+            PomodoroTimer.render();
+        } else {
+            this.renderPageContent('pomodoro', `
+                <div class="page-header">
+                    <h2><i class="fas fa-clock"></i> Pomodoro Timer</h2>
+                </div>
+                <div id="pomodoroContainer">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading Pomodoro...</p>
+                </div>
+            `);
+        }
+    },
+
+    showNotes() {
+        window.location.hash = 'notes';
+        // Check if NotesManager exists and has a render function
+        if (typeof NotesManager !== 'undefined' && NotesManager.render) {
+            NotesManager.render();
+        } else {
+            this.renderPageContent('notes', `
+                <div class="page-header">
+                    <h2><i class="fas fa-sticky-note"></i> Notes</h2>
+                    <button class="btn btn-primary" onclick="NotesManager.createNote()">
+                        <i class="fas fa-plus"></i> New Note
+                    </button>
+                </div>
+                <div id="notesContainer">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading notes...</p>
+                </div>
+            `);
+        }
+    },
+
+    showJournal() {
+        window.location.hash = 'journal';
+        // Check if Journal exists and has a render function
+        if (typeof Journal !== 'undefined' && Journal.render) {
+            Journal.render();
+        } else {
+            this.renderPageContent('journal', `
+                <div class="page-header">
+                    <h2><i class="fas fa-book-open"></i> Daily Journal</h2>
+                    <button class="btn btn-primary" onclick="Journal.open()">
+                        <i class="fas fa-plus"></i> New Entry
+                    </button>
+                </div>
+                <div id="journalContainer">
+                    <p style="text-align: center; color: var(--text-secondary);">Loading journal...</p>
+                </div>
+            `);
+        }
+    },
+
+    // Helper to render page content
+    renderPageContent(page, content) {
+        const pageContent = document.getElementById('pageContent');
+        if (pageContent) {
+            pageContent.innerHTML = content;
+        }
     },
 
     // ===== DATA EXPORT/IMPORT =====
     exportData() {
         try {
             const data = DataManager.exportAll();
-            
+
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = `lifeos-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-            
+
             URL.revokeObjectURL(url);
-            
+
             NotificationSystem.success('Data exported successfully!');
         } catch (error) {
             NotificationSystem.error('Failed to export data');
@@ -3243,21 +4125,21 @@ const App = {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
-        
+
         input.onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            
+
             const reader = new FileReader();
-            
+
             reader.onload = (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
                     const results = DataManager.importData(data, { merge: false });
-                    
+
                     if (results.failed.length === 0) {
                         NotificationSystem.success('Data imported successfully!');
-                        
+
                         // Refresh UI
                         TaskManager.render();
                         TransactionManager.updateBalance();
@@ -3272,10 +4154,10 @@ const App = {
                     NotificationSystem.error('Invalid file format');
                 }
             };
-            
+
             reader.readAsText(file);
         };
-        
+
         input.click();
     },
 
@@ -3298,22 +4180,22 @@ let currentCalendarDate = new Date();
 function generateCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
     if (!calendarGrid) return;
-    
+
     const year = currentCalendarDate.getFullYear();
     const month = currentCalendarDate.getMonth();
-    
+
     // Update month display
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
     const monthDisplay = document.getElementById('currentMonth');
     if (monthDisplay) {
         monthDisplay.textContent = `${monthNames[month]} ${year}`;
     }
-    
+
     // Get first day of month and total days
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     // Get tasks for this month
     const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
     const tasksByDate = {};
@@ -3322,7 +4204,7 @@ function generateCalendar() {
             tasksByDate[task.deadline] = (tasksByDate[task.deadline] || 0) + 1;
         }
     });
-    
+
     // Build calendar HTML
     let html = '<div class="calendar-day-header">Sun</div>';
     html += '<div class="calendar-day-header">Mon</div>';
@@ -3331,27 +4213,27 @@ function generateCalendar() {
     html += '<div class="calendar-day-header">Thu</div>';
     html += '<div class="calendar-day-header">Fri</div>';
     html += '<div class="calendar-day-header">Sat</div>';
-    
+
     // Empty cells for days before first
     for (let i = 0; i < firstDay; i++) {
         html += '<div class="calendar-day empty"></div>';
     }
-    
+
     // Days of month
     const today = new Date().toISOString().split('T')[0];
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const isToday = dateStr === today;
         const taskCount = tasksByDate[dateStr] || 0;
-        
+
         html += `<div class="calendar-day ${isToday ? 'today' : ''}" onclick="showTasksForDate('${dateStr}')">
             <span class="day-number">${day}</span>
             ${taskCount > 0 ? `<span class="task-indicator" style="position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: var(--accent-primary); color: white; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center;">${taskCount}</span>` : ''}
         </div>`;
     }
-    
+
     calendarGrid.innerHTML = html;
-    
+
     // Update upcoming tasks
     updateUpcomingTasks();
 }
@@ -3369,12 +4251,12 @@ function nextMonth() {
 function showTasksForDate(date) {
     const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
     const tasksForDate = tasks.filter(t => t.deadline === date);
-    
+
     if (tasksForDate.length === 0) {
         NotificationSystem.info('No tasks for this date');
         return;
     }
-    
+
     const content = tasksForDate.map(task => `
         <div style="padding: 12px; margin-bottom: 8px; background: var(--bg-primary); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
             <div>
@@ -3384,7 +4266,7 @@ function showTasksForDate(date) {
             <div style="font-size: 1.5rem;">${task.completed ? '✅' : '⬜'}</div>
         </div>
     `).join('');
-    
+
     ModalManager.create({
         id: 'tasks-for-date-modal',
         title: 'Tasks for ' + new Date(date).toLocaleDateString(),
@@ -3397,20 +4279,20 @@ function showTasksForDate(date) {
 function updateUpcomingTasks() {
     const upcomingContainer = document.getElementById('upcomingTasks');
     if (!upcomingContainer) return;
-    
+
     const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
     const today = new Date().toISOString().split('T')[0];
-    
+
     const upcoming = tasks
         .filter(t => !t.completed && t.deadline && t.deadline >= today)
         .sort((a, b) => a.deadline.localeCompare(b.deadline))
         .slice(0, 5);
-    
+
     if (upcoming.length === 0) {
         upcomingContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">No upcoming tasks</div>';
         return;
     }
-    
+
     upcomingContainer.innerHTML = upcoming.map(task => `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--border-color);">
             <span>${SecurityUtils.escapeHtml(task.title)}</span>
@@ -3425,23 +4307,23 @@ function updateProductivityStats() {
     const completed = tasks.filter(t => t.completed).length;
     const total = tasks.length;
     const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
+
     const rateEl = document.getElementById('completionRate');
     if (rateEl) rateEl.textContent = `${rate}%`;
-    
+
     updateStreak();
 }
 
 function updateStreak() {
     const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
     const completedTasks = tasks.filter(t => t.completed);
-    
+
     if (completedTasks.length === 0) {
         const streakEl = document.getElementById('streakCount');
         if (streakEl) streakEl.textContent = '0';
         return;
     }
-    
+
     // Get unique dates when tasks were completed
     const completedDates = new Set();
     completedTasks.forEach(task => {
@@ -3449,17 +4331,17 @@ function updateStreak() {
             completedDates.add(task.completedAt.split('T')[0]);
         }
     });
-    
+
     // Calculate streak
     let streak = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     for (let i = 0; i < 365; i++) {
         const checkDate = new Date(today);
         checkDate.setDate(today.getDate() - i);
         const dateStr = checkDate.toISOString().split('T')[0];
-        
+
         if (completedDates.has(dateStr)) {
             streak++;
         } else if (i > 0) {
@@ -3467,7 +4349,7 @@ function updateStreak() {
             break;
         }
     }
-    
+
     const streakEl = document.getElementById('streakCount');
     if (streakEl) streakEl.textContent = streak.toString();
 }
@@ -3475,19 +4357,19 @@ function updateStreak() {
 function updateGamification() {
     const tasks = DataManager.get(DataManager.STORAGE_KEYS.TASKS, []);
     const completedCount = tasks.filter(t => t.completed).length;
-    
+
     // Calculate XP: 10 XP per completed task
     const xp = completedCount * 10;
-    
+
     // Calculate level: level up every 100 XP
     const level = Math.floor(xp / 100) + 1;
     const xpInLevel = xp % 100;
-    
+
     // Update DOM
     const levelEl = document.getElementById('userLevel');
     const xpEl = document.getElementById('userXP');
     const progressEl = document.getElementById('xpProgressBar');
-    
+
     if (levelEl) levelEl.textContent = level;
     if (xpEl) xpEl.textContent = `${xpInLevel}/100 XP`;
     if (progressEl) progressEl.style.width = `${xpInLevel}%`;
@@ -3507,11 +4389,11 @@ window.AuthManager = AuthManager;
 window.App = App;
 
 // Global functions for HTML onclick handlers
-window.logMood = function(mood) {
+window.logMood = function (mood) {
     const journal = document.getElementById('journalEntry')?.value || '';
     const gratitude = document.getElementById('gratitudeInput')?.value || '';
     MoodManager.logMood(mood, journal, gratitude);
-    
+
     // Clear inputs
     const journalInput = document.getElementById('journalEntry');
     const gratitudeInput = document.getElementById('gratitudeInput');
@@ -3519,7 +4401,7 @@ window.logMood = function(mood) {
     if (gratitudeInput) gratitudeInput.value = '';
 };
 
-window.addTransaction = function() {
+window.addTransaction = function () {
     const desc = document.getElementById('expenseDesc');
     const amount = document.getElementById('expenseAmount');
     const category = document.getElementById('expenseCategory');
@@ -3543,16 +4425,16 @@ window.addTimezone = () => App.addTimezone();
 window.installPWA = () => App.installPWA();
 window.dismissInstall = () => App.dismissInstall();
 window.exportData = () => App.exportData();
-window.importDataFromFile = function(event) {
+window.importDataFromFile = function (event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const data = JSON.parse(e.target.result);
             const results = DataManager.importData(data);
-            
+
             if (results.failed.length === 0) {
                 NotificationSystem.success('Data imported successfully!');
                 TaskManager.render();
@@ -3564,7 +4446,7 @@ window.importDataFromFile = function(event) {
             } else {
                 NotificationSystem.warning('Some data could not be imported');
             }
-            
+
             ModalManager.close('settings-modal');
         } catch (error) {
             NotificationSystem.error('Invalid file format');
@@ -3574,14 +4456,14 @@ window.importDataFromFile = function(event) {
 };
 
 // Quick actions
-window.toggleQuickActions = function() {
+window.toggleQuickActions = function () {
     const dropdown = document.getElementById('quickActionsDropdown');
     if (dropdown) {
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
     }
 };
 
-window.quickAddTask = function() {
+window.quickAddTask = function () {
     const taskInput = document.getElementById('taskInput');
     if (taskInput) {
         taskInput.focus();
@@ -3589,12 +4471,12 @@ window.quickAddTask = function() {
     }
 };
 
-window.quickLogMood = function() {
+window.quickLogMood = function () {
     document.querySelector('.mood-btn')?.scrollIntoView({ behavior: 'smooth' });
     toggleQuickActions();
 };
 
-window.quickAddExpense = function() {
+window.quickAddExpense = function () {
     const expenseDesc = document.getElementById('expenseDesc');
     if (expenseDesc) {
         expenseDesc.focus();
@@ -3603,14 +4485,14 @@ window.quickAddExpense = function() {
 };
 
 // Notifications
-window.toggleNotifications = function() {
+window.toggleNotifications = function () {
     const dropdown = document.getElementById('notificationsDropdown');
     if (dropdown) {
         dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
     }
 };
 
-window.markAllNotificationsRead = function() {
+window.markAllNotificationsRead = function () {
     document.getElementById('notificationBadge').style.display = 'none';
     NotificationSystem.success('All notifications marked as read');
 };

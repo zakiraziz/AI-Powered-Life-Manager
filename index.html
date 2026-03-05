@@ -1,56 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Security Headers -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="robots" content="index, follow">
-    
+
     <!-- SEO Meta Tags -->
-    <meta name="description" content="LifeOS - The Ultimate AI-Powered Life Operating System. Manage tasks, track moods, expenses, habits, and boost productivity with advanced analytics.">
-    <meta name="keywords" content="lifeos, productivity, task manager, mood tracker, expense tracker, habit tracker, pomodoro, notes, ai assistant, calendar">
+    <meta name="description"
+        content="LifeOS - The Ultimate AI-Powered Life Operating System. Manage tasks, track moods, expenses, habits, and boost productivity with advanced analytics.">
+    <meta name="keywords"
+        content="lifeos, productivity, task manager, mood tracker, expense tracker, habit tracker, pomodoro, notes, ai assistant, calendar">
     <meta name="author" content="LifeOS">
     <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="LifeOS - Your Digital Brain">
     <meta property="og:description" content="The most advanced personal operating system for ultimate productivity">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/og-image.png">
     <meta property="og:url" content="https://lifeos.app">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="LifeOS - Your Digital Brain">
     <meta name="twitter:description" content="The most advanced personal operating system for ultimate productivity">
     <meta name="twitter:image" content="assets/twitter-card.png">
-    
+
     <title>LifeOS Pro - Ultimate Life Operating System</title>
-    
+
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts - Inter & Space Grotesk -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
+
     <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-    
+
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/styles.css">
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
     <!-- Loading Screen with Progress -->
     <div id="loadingScreen" class="loading-screen">
@@ -77,7 +83,7 @@
                 <span>LifeOS</span>
                 <span class="beta-badge">PRO</span>
             </div>
-            
+
             <div class="nav-links" id="navLinks">
                 <a href="#dashboard" class="nav-link active" data-page="dashboard">
                     <i class="fas fa-home"></i>
@@ -115,8 +121,12 @@
                     <i class="fas fa-sticky-note"></i>
                     <span class="nav-text">Notes</span>
                 </a>
+                <a href="#journal" class="nav-link" data-page="journal">
+                    <i class="fas fa-book-open"></i>
+                    <span class="nav-text">Journal</span>
+                </a>
             </div>
-            
+
             <div class="nav-actions">
                 <!-- Gamification Stats -->
                 <div class="gamification-btn" onclick="Gamification.showStatsPanel()" title="Your Stats">
@@ -124,12 +134,13 @@
                         <i class="fas fa-star"></i> <span id="navLevel">1</span>
                     </div>
                 </div>
-                
+
                 <!-- Keyboard Shortcuts -->
-                <button class="shortcuts-btn" onclick="KeyboardShortcuts.showShortcutsHelp()" title="Keyboard Shortcuts">
+                <button class="shortcuts-btn" onclick="KeyboardShortcuts.showShortcutsHelp()"
+                    title="Keyboard Shortcuts">
                     <i class="fas fa-keyboard"></i>
                 </button>
-                
+
                 <!-- Quick Actions -->
                 <div class="quick-actions">
                     <button class="quick-actions-btn" onclick="UI.toggleDropdown('quickActionsDropdown')">
@@ -164,7 +175,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Language Switcher -->
                 <div class="language-switcher">
                     <button class="lang-btn active" onclick="I18n.changeLanguage('en')">EN</button>
@@ -172,12 +183,12 @@
                     <button class="lang-btn" onclick="I18n.changeLanguage('ar')">عربي</button>
                     <button class="lang-btn" onclick="I18n.changeLanguage('es')">ES</button>
                 </div>
-                
+
                 <!-- Theme Toggle -->
-                <button class="theme-toggle" onclick="Theme.toggle()">
+                <button class="theme-toggle" onclick="App.toggleTheme()">
                     <i class="fas fa-moon"></i>
                 </button>
-                
+
                 <!-- Notifications -->
                 <div class="notifications-container">
                     <button class="notifications-btn" onclick="UI.toggleDropdown('notificationsDropdown')">
@@ -200,7 +211,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- User Menu -->
                 <div class="user-menu-container" id="userMenuContainer" style="display: none;">
                     <button class="user-menu-btn" id="userMenuBtn" onclick="Auth.toggleUserMenu()">
@@ -251,12 +262,12 @@
                 <h2>LifeOS</h2>
                 <p>Your Digital Brain</p>
             </div>
-            
+
             <div class="auth-tabs">
                 <button class="auth-tab active" onclick="Auth.switchTab('login')">Login</button>
                 <button class="auth-tab" onclick="Auth.switchTab('signup')">Sign Up</button>
             </div>
-            
+
             <!-- Login Form -->
             <form class="auth-form" id="loginForm">
                 <div class="form-group">
@@ -264,13 +275,14 @@
                     <input type="email" id="email" placeholder="Enter your email" required autocomplete="email">
                     <i class="fas fa-envelope input-icon"></i>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+                    <input type="password" id="password" placeholder="Enter your password" required
+                        autocomplete="current-password">
                     <i class="fas fa-lock input-icon"></i>
                 </div>
-                
+
                 <div class="form-options">
                     <label class="checkbox">
                         <input type="checkbox" id="rememberMe">
@@ -278,12 +290,12 @@
                     </label>
                     <a href="#" class="forgot-password" onclick="Auth.forgotPassword()">Forgot password?</a>
                 </div>
-                
+
                 <button type="submit" class="btn-primary btn-block">
                     <i class="fas fa-sign-in-alt"></i>
                     <span>Login</span>
                 </button>
-                
+
                 <div class="social-login">
                     <p>Or continue with</p>
                     <div class="social-buttons">
@@ -307,16 +319,17 @@
                     <input type="text" id="signupName" placeholder="Enter your full name" required autocomplete="name">
                     <i class="fas fa-user input-icon"></i>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupEmail">Email</label>
                     <input type="email" id="signupEmail" placeholder="Enter your email" required autocomplete="email">
                     <i class="fas fa-envelope input-icon"></i>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" placeholder="Create a password" required autocomplete="new-password">
+                    <input type="password" id="signupPassword" placeholder="Create a password" required
+                        autocomplete="new-password">
                     <i class="fas fa-lock input-icon"></i>
                     <div class="password-strength">
                         <div class="strength-bar">
@@ -325,20 +338,22 @@
                         <span id="passwordStrengthText">Enter password</span>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signupConfirmPassword">Confirm Password</label>
-                    <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required autocomplete="new-password">
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required
+                        autocomplete="new-password">
                     <i class="fas fa-lock input-icon"></i>
                 </div>
-                
+
                 <div class="form-group terms">
                     <label class="checkbox">
                         <input type="checkbox" id="termsAgree" required>
-                        <span>I agree to the <a href="#" onclick="Auth.showTerms()">Terms</a> and <a href="#" onclick="Auth.showPrivacy()">Privacy Policy</a></span>
+                        <span>I agree to the <a href="#" onclick="Auth.showTerms()">Terms</a> and <a href="#"
+                                onclick="Auth.showPrivacy()">Privacy Policy</a></span>
                     </label>
                 </div>
-                
+
                 <button type="submit" class="btn-primary btn-block">
                     <i class="fas fa-user-plus"></i>
                     <span>Create Account</span>
@@ -353,7 +368,7 @@
         <div class="welcome-section">
             <div class="welcome-content">
                 <h1>
-                    <span data-i18n="welcomeMessage">Welcome back</span>, 
+                    <span data-i18n="welcomeMessage">Welcome back</span>,
                     <span id="userName">User</span>! 👋
                 </h1>
                 <p id="currentDateTime"></p>
@@ -394,7 +409,8 @@
                 <div class="chat-container">
                     <div class="chat-messages" id="chatMessages"></div>
                     <div class="chat-input-container">
-                        <input type="text" id="chatInput" placeholder="Ask me anything... (or use voice)" onkeypress="if(event.key==='Enter') AIAssistant.sendMessage(this.value)">
+                        <input type="text" id="chatInput" placeholder="Ask me anything... (or use voice)"
+                            onkeypress="if(event.key==='Enter') AIAssistant.sendMessage(this.value)">
                         <button id="voiceInputBtn" onclick="AIAssistant.toggleVoice()" title="Voice Input">
                             <i class="fas fa-microphone"></i>
                         </button>
@@ -588,7 +604,7 @@
                         <p id="profileJoined">Joined: Jan 1, 2024</p>
                     </div>
                 </div>
-                
+
                 <div class="profile-stats">
                     <div class="stat-card">
                         <div class="stat-value" id="profileTasks">0</div>
@@ -603,7 +619,7 @@
                         <div class="stat-label">Notes</div>
                     </div>
                 </div>
-                
+
                 <div class="profile-section">
                     <h4>Edit Profile</h4>
                     <div class="form-group">
@@ -638,7 +654,7 @@
                     <button class="settings-tab" onclick="Settings.switchTab('data')">Data</button>
                     <button class="settings-tab" onclick="Settings.switchTab('about')">About</button>
                 </div>
-                
+
                 <div id="settingsGeneral" class="settings-panel active">
                     <h4>General Settings</h4>
                     <div class="settings-group">
@@ -654,7 +670,7 @@
                                 <option value="es">Español</option>
                             </select>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Time Zone</div>
@@ -662,7 +678,7 @@
                             </div>
                             <select id="settingsTimezone" onchange="Settings.changeTimezone(this.value)"></select>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">First Day of Week</div>
@@ -676,7 +692,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="settingsAppearance" class="settings-panel">
                     <h4>Appearance Settings</h4>
                     <div class="settings-group">
@@ -697,28 +713,30 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Accent Color</div>
                                 <div class="settings-description">Customize your theme color</div>
                             </div>
-                            <input type="color" id="settingsAccentColor" value="#3b82f6" onchange="Theme.setAccent(this.value)">
+                            <input type="color" id="settingsAccentColor" value="#3b82f6"
+                                onchange="Theme.setAccent(this.value)">
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Compact Mode</div>
                                 <div class="settings-description">Show more content with compact spacing</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="settingsCompact" onchange="Settings.toggleCompact(this.checked)">
+                                <input type="checkbox" id="settingsCompact"
+                                    onchange="Settings.toggleCompact(this.checked)">
                                 <span class="slider round"></span>
                             </label>
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="settingsNotifications" class="settings-panel">
                     <h4>Notification Settings</h4>
                     <div class="settings-group">
@@ -728,46 +746,50 @@
                                 <div class="settings-description">Receive browser notifications</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="settingsNotifications" onchange="Settings.toggleNotifications(this.checked)" checked>
+                                <input type="checkbox" id="settingsNotifications"
+                                    onchange="Settings.toggleNotifications(this.checked)" checked>
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Task Reminders</div>
                                 <div class="settings-description">Get reminded about pending tasks</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="settingsTaskReminders" onchange="Settings.toggleTaskReminders(this.checked)" checked>
+                                <input type="checkbox" id="settingsTaskReminders"
+                                    onchange="Settings.toggleTaskReminders(this.checked)" checked>
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Habit Reminders</div>
                                 <div class="settings-description">Daily habit reminders</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="settingsHabitReminders" onchange="Settings.toggleHabitReminders(this.checked)" checked>
+                                <input type="checkbox" id="settingsHabitReminders"
+                                    onchange="Settings.toggleHabitReminders(this.checked)" checked>
                                 <span class="slider round"></span>
                             </label>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Pomodoro Alerts</div>
                                 <div class="settings-description">Sound and notifications for timer</div>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" id="settingsPomodoroAlerts" onchange="Settings.togglePomodoroAlerts(this.checked)" checked>
+                                <input type="checkbox" id="settingsPomodoroAlerts"
+                                    onchange="Settings.togglePomodoroAlerts(this.checked)" checked>
                                 <span class="slider round"></span>
                             </label>
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="settingsData" class="settings-panel">
                     <h4>Data Management</h4>
                     <div class="settings-group">
@@ -780,7 +802,7 @@
                                 <i class="fas fa-download"></i> Export
                             </button>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Import Data</div>
@@ -789,9 +811,10 @@
                             <button class="btn-secondary" onclick="document.getElementById('importFile').click()">
                                 <i class="fas fa-upload"></i> Import
                             </button>
-                            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="DataManager.importFromFile(event)">
+                            <input type="file" id="importFile" accept=".json" style="display: none;"
+                                onchange="DataManager.importFromFile(event)">
                         </div>
-                        
+
                         <div class="settings-item">
                             <div>
                                 <div class="settings-label">Storage Usage</div>
@@ -801,7 +824,7 @@
                                 <i class="fas fa-database"></i> Check
                             </button>
                         </div>
-                        
+
                         <div class="settings-item danger-zone">
                             <div>
                                 <div class="settings-label text-danger">Clear All Data</div>
@@ -813,7 +836,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="settingsAbout" class="settings-panel">
                     <h4>About LifeOS</h4>
                     <div class="about-section">
@@ -822,20 +845,21 @@
                             <h3>LifeOS Pro</h3>
                         </div>
                         <p class="version">Version 3.0.0</p>
-                        <p class="description">The ultimate AI-powered life operating system designed to help you manage your tasks, track your habits, monitor your mood, and boost your productivity.</p>
-                        
+                        <p class="description">The ultimate AI-powered life operating system designed to help you manage
+                            your tasks, track your habits, monitor your mood, and boost your productivity.</p>
+
                         <div class="about-links">
                             <a href="#" onclick="Auth.showTerms()">Terms of Service</a>
                             <a href="#" onclick="Auth.showPrivacy()">Privacy Policy</a>
                             <a href="#" onclick="Auth.showContact()">Contact Us</a>
                         </div>
-                        
+
                         <div class="about-social">
                             <a href="#" class="social-link"><i class="fab fa-github"></i></a>
                             <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                             <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
                         </div>
-                        
+
                         <p class="copyright">© 2024 LifeOS. All rights reserved.</p>
                     </div>
                 </div>
@@ -868,7 +892,7 @@
     <script src="js/core/modal.js"></script>
     <script src="js/core/performance.js"></script>
     <script src="js/core/i18n.js"></script>
-    
+
     <!-- Module Scripts -->
     <script src="js/modules/auth.js"></script>
     <script src="js/modules/tasks.js"></script>
@@ -882,19 +906,19 @@
     <script src="js/modules/notes.js"></script>
     <script src="js/modules/water.js"></script>
     <script src="js/modules/export.js"></script>
-    
+
     <!-- Gamification System -->
     <script src="js/gamification.js"></script>
-    
+
     <!-- Keyboard Shortcuts -->
     <script src="js/keyboardShortcuts.js"></script>
-    
+
     <!-- Quick Actions -->
     <script src="js/quickActions.js"></script>
-    
+
     <!-- Widget Dashboard -->
     <script src="js/widgetDashboard.js"></script>
-    
+
     <!-- Service Worker Registration (PWA) -->
     <script>
         if ('serviceWorker' in navigator) {
@@ -905,7 +929,7 @@
             });
         }
     </script>
-    
+
     <!-- Main App -->
     <!-- Widget Customize Modal -->
     <div id="widgetCustomizeModal" class="modal hidden">
@@ -921,7 +945,8 @@
             </div>
             <div class="modal-body">
                 <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                    <i class="fas fa-info-circle"></i> Drag widgets to reorder. Toggle visibility by clicking the eye icon.
+                    <i class="fas fa-info-circle"></i> Drag widgets to reorder. Toggle visibility by clicking the eye
+                    icon.
                 </p>
                 <div id="widgetList" class="widget-list">
                     <!-- Widget items will be rendered by JS -->
@@ -933,7 +958,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Achievements Modal -->
     <div id="achievementsModal" class="modal hidden">
         <div class="modal-content modal-lg">
@@ -953,7 +978,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Keyboard Shortcuts Help Modal -->
     <div id="shortcutsModal" class="modal hidden">
         <div class="modal-content modal-lg">
@@ -998,7 +1023,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Gamification Stats Modal -->
     <div id="gamificationStatsModal" class="modal hidden">
         <div class="modal-content">
@@ -1046,7 +1071,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Quick Add Task Modal -->
     <div id="quickAddTaskModal" class="modal hidden">
         <div class="modal-content">
@@ -1095,7 +1120,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Search Modal -->
     <div id="searchModal" class="modal hidden">
         <div class="modal-content modal-lg">
@@ -1111,7 +1136,8 @@
             <div class="modal-body">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="globalSearchInput" placeholder="Search tasks, habits, notes..." onkeyup="App.globalSearch(this.value)">
+                    <input type="text" id="globalSearchInput" placeholder="Search tasks, habits, notes..."
+                        onkeyup="App.globalSearch(this.value)">
                 </div>
                 <div id="searchResults" class="search-results">
                     <p style="text-align: center; color: var(--text-tertiary);">Start typing to search...</p>
@@ -1119,7 +1145,59 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Journal Modal for new entry -->
+    <div id="journalModal" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-book-open"></i>
+                    <h3>New Journal Entry</h3>
+                </div>
+                <button class="modal-close" onclick="ModalManager.close('journalModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="journalTitle" placeholder="Give your entry a title..." class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>What's on your mind?</label>
+                    <textarea id="journalContent" rows="10" placeholder="Write your thoughts..."
+                        class="form-input"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="ModalManager.close('journalModal')">Cancel</button>
+                <button class="btn-primary" onclick="Journal.save()"><i class="fas fa-save"></i> Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Scripts -->
     <script src="js/app.js"></script>
+
+    <!-- Feature Modules (loaded after core) -->
+    <script src="js/auth.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/habitTracker.js"></script>
+    <script src="js/pomodoroTimer.js"></script>
+    <script src="js/notesManager.js"></script>
+    <script src="js/journal.js"></script>
+    <script src="js/transactionManager.js"></script>
+    <script src="js/waterTracker.js"></script>
+    <script src="js/moodManager.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/gamification.js"></script>
+    <script src="js/aiAssistant.js"></script>
+    <script src="js/exportManager.js"></script>
+    <script src="js/widgetDashboard.js"></script>
+    <script src="js/keyboardShortcuts.js"></script>
+    <script src="js/quickActions.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/teamManager.js"></script>
 </body>
+
 </html>

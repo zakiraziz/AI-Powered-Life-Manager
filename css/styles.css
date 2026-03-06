@@ -2020,6 +2020,780 @@ body {
     gap: 1.5rem;
 }
 
+/* ===== ENHANCED DASHBOARD GRID CONTAINER ===== */
+.dashboard-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+/* ===== DASHBOARD CARDS ===== */
+.dash-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-primary);
+}
+
+.dash-card-large {
+    grid-column: span 2;
+}
+
+.dash-card-half {
+    grid-column: span 2;
+}
+
+.dash-card-full {
+    grid-column: span 4;
+}
+
+.dash-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dash-card-header i {
+    font-size: 1.1rem;
+    color: var(--accent-primary);
+}
+
+.dash-card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.dash-card-action {
+    background: var(--bg-tertiary);
+    border: none;
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.dash-card-action:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.dash-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== TODAY'S OVERVIEW ===== */
+.overview-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.overview-stat {
+    text-align: center;
+}
+
+.overview-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.overview-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.progress-ring-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-ring {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+}
+
+.progress-ring .progress-bg {
+    fill: none;
+    stroke: var(--bg-tertiary);
+    stroke-width: 8;
+}
+
+.progress-ring .progress-fill {
+    fill: none;
+    stroke: var(--accent-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-ring .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ===== MOOD CARD ===== */
+.mood-card {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.mood-emoji {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.mood-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.mood-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-success);
+    font-size: 0.85rem;
+}
+
+/* ===== WATER CARD ===== */
+.water-card {
+    align-items: center;
+}
+
+.water-count {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.water-count span {
+    color: var(--text-secondary);
+}
+
+.water-progress {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.water-glass {
+    width: 28px;
+    height: 32px;
+    background: var(--bg-tertiary);
+    border-radius: 4px 4px 8px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.water-glass:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.water-glass.filled {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+}
+
+/* ===== POMODORO CARD ===== */
+.pomodoro-card {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.pomodoro-time {
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', monospace;
+    margin-bottom: 0.25rem;
+}
+
+.pomodoro-status {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.pomodoro-btn {
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.pomodoro-btn:hover {
+    background: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+/* ===== HABITS LIST ===== */
+.habits-list {
+    gap: 0.75rem;
+}
+
+.habit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.habit-item:hover {
+    background: var(--glass-effect);
+}
+
+.habit-check {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: transparent;
+}
+
+.habit-check:hover {
+    border-color: var(--accent-primary);
+}
+
+.habit-check.completed {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.habit-name {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.habit-streak {
+    color: #f59e0b;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ===== GOALS LIST ===== */
+.goals-list {
+    gap: 1rem;
+}
+
+.goal-item {
+    padding: 0.75rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+}
+
+.goal-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.goal-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.goal-progress-text {
+    font-size: 0.85rem;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.goal-progress-bar {
+    height: 6px;
+    background: var(--bg-primary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* ===== QUICK ACTIONS GRID ===== */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quick-action-btn:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.quick-action-btn i {
+    font-size: 1.25rem;
+}
+
+.quick-action-btn span {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* ===== AI INSIGHT CARD ===== */
+.ai-insight-card {
+    align-items: center;
+    text-align: center;
+}
+
+.ai-insight-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--accent-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.ai-insight-icon i {
+    font-size: 1.25rem;
+    color: white;
+}
+
+.ai-insight-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.ai-insight-btn {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ai-insight-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+}
+
+/* ===== EXPENSES SUMMARY ===== */
+.expenses-summary {
+    align-items: center;
+    text-align: center;
+}
+
+.expense-total {
+    margin-bottom: 1rem;
+}
+
+.expense-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.expense-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-danger);
+}
+
+.expense-chart-mini {
+    width: 100%;
+    height: 60px;
+}
+
+/* ===== UPCOMING TASKS ===== */
+.upcoming-tasks {
+    gap: 0.5rem;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+}
+
+.task-priority {
+    width: 4px;
+    height: 32px;
+    border-radius: 2px;
+}
+
+.task-priority.high {
+    background: var(--color-danger);
+}
+
+.task-priority.medium {
+    background: #f59e0b;
+}
+
+.task-priority.low {
+    background: var(--color-success);
+}
+
+.task-item .task-title {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.task-item .task-due {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ===== ACHIEVEMENTS PREVIEW ===== */
+.achievements-preview {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.achievement-badge {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.achievement-badge i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.achievement-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* ===== SLEEP CARD ===== */
+.sleep-card {
+    align-items: center;
+    text-align: center;
+}
+
+.sleep-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.sleep-duration i {
+    color: #6366f1;
+}
+
+.sleep-quality {
+    font-size: 0.85rem;
+    color: var(--color-success);
+}
+
+/* ===== RECENT NOTES ===== */
+.recent-notes {
+    gap: 0.75rem;
+}
+
+.note-preview {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.6rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.note-preview:hover {
+    background: var(--glass-effect);
+}
+
+.note-color {
+    width: 4px;
+    border-radius: 2px;
+}
+
+.note-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.note-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.note-excerpt {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+/* ===== CALENDAR PREVIEW ===== */
+.calendar-preview {
+    justify-content: center;
+}
+
+.calendar-week {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--bg-tertiary);
+}
+
+.calendar-day.today {
+    background: var(--accent-primary);
+}
+
+.calendar-day.today .day-name,
+.calendar-day.today .day-num {
+    color: white;
+}
+
+.day-name {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.day-num {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.day-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.day-dot.active {
+    background: var(--accent-primary);
+}
+
+/* ===== FOCUS MODE CARD ===== */
+.focus-mode-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.focus-mode-info {
+    flex: 1;
+}
+
+.focus-mode-info p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.focus-mode-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.focus-mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.focus-mode-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.focus-stat {
+    text-align: center;
+}
+
+.focus-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.focus-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ===== RESPONSIVE DASHBOARD ===== */
+@media (max-width: 1400px) {
+    .dashboard-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dash-card-full {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 992px) {
+    .dash-card-large,
+    .dash-card-half,
+    .dash-card-full {
+        grid-column: span 2;
+    }
+    
+    .focus-mode-card {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .dash-card-large,
+    .dash-card-half,
+    .dash-card-full {
+        grid-column: span 1;
+    }
+    
+    .overview-stats {
+        justify-content: space-around;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .dashboard-card {
     background: var(--bg-card);
     border-radius: var(--radius-lg);

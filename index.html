@@ -389,6 +389,398 @@
             </div>
         </div>
 
+        <!-- Enhanced Dashboard Grid -->
+        <div class="dashboard-grid-container">
+            <!-- Row 1: Main Info Cards -->
+            <div class="dashboard-row">
+                <!-- Today's Overview Card -->
+                <div class="dash-card dash-card-large" onclick="App.navigateTo('tasks')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-sun"></i>
+                        <h3>Today's Overview</h3>
+                    </div>
+                    <div class="dash-card-body">
+                        <div class="overview-stats">
+                            <div class="overview-stat">
+                                <span class="overview-value" id="todayTasksTotal">0</span>
+                                <span class="overview-label">Tasks</span>
+                            </div>
+                            <div class="overview-stat">
+                                <span class="overview-value" id="todayTasksDone">0</span>
+                                <span class="overview-label">Done</span>
+                            </div>
+                            <div class="overview-stat">
+                                <span class="overview-value" id="todayTasksPending">0</span>
+                                <span class="overview-label">Pending</span>
+                            </div>
+                        </div>
+                        <div class="progress-ring-container">
+                            <div class="progress-ring" id="todayProgressRing">
+                                <svg viewBox="0 0 100 100">
+                                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                                    <circle class="progress-fill" cx="50" cy="50" r="45" id="todayProgressCircle"></circle>
+                                </svg>
+                                <div class="progress-text" id="todayProgressPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Mood Card -->
+                <div class="dash-card" onclick="App.navigateTo('mood')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-heart"></i>
+                        <h3>Current Mood</h3>
+                    </div>
+                    <div class="dash-card-body mood-card">
+                        <div class="mood-emoji" id="currentMoodEmoji">😊</div>
+                        <div class="mood-text" id="currentMoodText">Great</div>
+                        <div class="mood-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Feeling good!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water Tracker Card -->
+                <div class="dash-card" onclick="App.navigateTo('water')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-tint"></i>
+                        <h3>Hydration</h3>
+                    </div>
+                    <div class="dash-card-body water-card">
+                        <div class="water-count">
+                            <span id="waterGlasses">0</span>/<span id="waterGoal">8</span>
+                        </div>
+                        <div class="water-progress">
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                            <div class="water-glass" onclick="WaterTracker.addGlass()">
+                                <i class="fas fa-glass-water"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pomodoro Timer Card -->
+                <div class="dash-card" onclick="App.navigateTo('pomodoro')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-clock"></i>
+                        <h3>Focus Timer</h3>
+                    </div>
+                    <div class="dash-card-body pomodoro-card">
+                        <div class="pomodoro-time" id="pomodoroDisplay">25:00</div>
+                        <div class="pomodoro-status" id="pomodoroStatus">Ready to focus</div>
+                        <button class="pomodoro-btn" onclick="PomodoroTimer.start()">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Habits & Goals -->
+            <div class="dashboard-row">
+                <!-- Habits Progress Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('habits')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-check-double"></i>
+                        <h3>Today's Habits</h3>
+                        <button class="dash-card-action" onclick="ModalManager.open('habitModal'); event.stopPropagation();">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="dash-card-body habits-list" id="dashboardHabitsList">
+                        <div class="habit-item">
+                            <div class="habit-check" onclick="HabitTracker.toggleHabit(this.dataset.id)" data-id="habit1">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="habit-name">Morning Exercise</span>
+                            <span class="habit-streak">🔥 5</span>
+                        </div>
+                        <div class="habit-item">
+                            <div class="habit-check" onclick="HabitTracker.toggleHabit(this.dataset.id)" data-id="habit2">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="habit-name">Read 30 mins</span>
+                            <span class="habit-streak">🔥 12</span>
+                        </div>
+                        <div class="habit-item">
+                            <div class="habit-check completed" onclick="HabitTracker.toggleHabit(this.dataset.id)" data-id="habit3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="habit-name">Meditate</span>
+                            <span class="habit-streak">🔥 30</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Progress Card -->n                <div class="dash-card dash-card-half" onclick="App.navigateTo('goals')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-bullseye"></i>
+                        <h3>Goal Progress</h3>
+                    </div>
+                    <div class="dash-card-body goals-list" id="dashboardGoalsList">
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-name">Complete project</span>
+                                <span class="goal-progress-text">75%</span>
+                            </div>
+                            <div class="goal-progress-bar">
+                                <div class="goal-progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-name">Save $5000</span>
+                                <span class="goal-progress-text">40%</span>
+                            </div>
+                            <div class="goal-progress-bar">
+                                <div class="goal-progress-fill" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="dash-card dash-card-half">
+                    <div class="dash-card-header">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="dash-card-body quick-actions-grid">
+                        <button class="quick-action-btn" onclick="QuickActions.addTask()">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Task</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="QuickActions.logMood()">
+                            <i class="fas fa-smile"></i>
+                            <span>Log Mood</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="QuickActions.addExpense()">
+                            <i class="fas fa-coins"></i>
+                            <span>Add Expense</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="QuickActions.startPomodoro()">
+                            <i class="fas fa-clock"></i>
+                            <span>Pomodoro</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="QuickActions.addHabit()">
+                            <i class="fas fa-check"></i>
+                            <span>Add Habit</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="QuickActions.addNote()">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Quick Note</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Insight Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('ai')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-robot"></i>
+                        <h3>AI Insight</h3>
+                    </div>
+                    <div class="dash-card-body ai-insight-card">
+                        <div class="ai-insight-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <p class="ai-insight-text" id="aiInsightText">
+                            You've been very productive this week! Consider taking a short break to maintain your energy levels.
+                        </p>
+                        <button class="ai-insight-btn" onclick="ModalManager.open('aiAssistantModal')">
+                            Ask AI <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Expenses & Activity -->
+            <div class="dashboard-row">
+                <!-- Expenses Summary Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('expenses')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-wallet"></i>
+                        <h3>This Month</h3>
+                    </div>
+                    <div class="dash-card-body expenses-summary">
+                        <div class="expense-total">
+                            <span class="expense-label">Total Spent</span>
+                            <span class="expense-amount" id="monthExpenses">$0.00</span>
+                        </div>
+                        <div class="expense-chart-mini">
+                            <canvas id="expensesMiniChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Tasks Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('tasks')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-list-check"></i>
+                        <h3>Upcoming Tasks</h3>
+                    </div>
+                    <div class="dash-card-body upcoming-tasks" id="upcomingTasksList">
+                        <div class="task-item">
+                            <div class="task-priority high"></div>
+                            <span class="task-title">Complete project report</span>
+                            <span class="task-due">Tomorrow</span>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-priority medium"></div>
+                            <span class="task-title">Team meeting</span>
+                            <span class="task-due">In 2 days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Card -->
+                <div class="dash-card dash-card-half" onclick="Gamification.showStatsPanel()">
+                    <div class="dash-card-header">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Achievements</h3>
+                    </div>
+                    <div class="dash-card-body achievements-preview">
+                        <div class="achievement-badge">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="achievement-info">
+                            <span class="achievement-title">7 Day Streak!</span>
+                            <span class="achievement-desc">Complete tasks 7 days in a row</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sleep Tracker Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('sleep')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-moon"></i>
+                        <h3>Sleep</h3>
+                    </div>
+                    <div class="dash-card-body sleep-card">
+                        <div class="sleep-duration">
+                            <i class="fas fa-bed"></i>
+                            <span>7h 30m</span>
+                        </div>
+                        <div class="sleep-quality">
+                            <span>Quality: Good</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 4: Recent Notes & Calendar -->
+            <div class="dashboard-row">
+                <!-- Recent Notes Card -->n                <div class="dash-card dash-card-half" onclick="App.navigateTo('notes')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>Recent Notes</h3>
+                        <button class="dash-card-action" onclick="NotesManager.createNote(); event.stopPropagation();">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="dash-card-body recent-notes">
+                        <div class="note-preview" onclick="NotesManager.createNote(); event.stopPropagation();">
+                            <div class="note-color" style="background: #3b82f6;"></div>
+                            <div class="note-content">
+                                <span class="note-title">Project Ideas</span>
+                                <span class="note-excerpt">Brainstorming new features...</span>
+                            </div>
+                        </div>
+                        <div class="note-preview" onclick="NotesManager.createNote(); event.stopPropagation();">
+                            <div class="note-color" style="background: #10b981;"></div>
+                            <div class="note-content">
+                                <span class="note-title">Meeting Notes</span>
+                                <span class="note-excerpt">Discussed Q4 goals...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Preview Card -->
+                <div class="dash-card dash-card-half" onclick="App.navigateTo('calendar')">
+                    <div class="dash-card-header">
+                        <i class="fas fa-calendar"></i>
+                        <h3>This Week</h3>
+                    </div>
+                    <div class="dash-card-body calendar-preview">
+                        <div class="calendar-week">
+                            <div class="calendar-day">
+                                <span class="day-name">Mon</span>
+                                <span class="day-num">5</span>
+                                <span class="day-dot"></span>
+                            </div>
+                            <div class="calendar-day today">
+                                <span class="day-name">Tue</span>
+                                <span class="day-num">6</span>
+                                <span class="day-dot active"></span>
+                            </div>
+                            <div class="calendar-day">
+                                <span class="day-name">Wed</span>
+                                <span class="day-num">7</span>
+                                <span class="day-dot"></span>
+                            </div>
+                            <div class="calendar-day">
+                                <span class="day-name">Thu</span>
+                                <span class="day-num">8</span>
+                                <span class="day-dot"></span>
+                            </div>
+                            <div class="calendar-day">
+                                <span class="day-name">Fri</span>
+                                <span class="day-num">9</span>
+                                <span class="day-dot"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Focus Mode Card -->
+                <div class="dash-card dash-card-full" onclick="FocusMode.toggle()">
+                    <div class="dash-card-header">
+                        <i class="fas fa-bullseye"></i>
+                        <h3>Focus Mode</h3>
+                    </div>
+                    <div class="dash-card-body focus-mode-card">
+                        <div class="focus-mode-info">
+                            <p>Block distractions and stay focused on what matters</p>
+                            <button class="focus-mode-btn" onclick="FocusMode.toggle(); event.stopPropagation();">
+                                <i class="fas fa-play"></i> Start Focus Session
+                            </button>
+                        </div>
+                        <div class="focus-mode-stats">
+                            <div class="focus-stat">
+                                <span class="focus-value">4</span>
+                                <span class="focus-label">Sessions Today</span>
+                            </div>
+                            <div class="focus-stat">
+                                <span class="focus-value">2h</span>
+                                <span class="focus-label">Total Time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Page Content Container -->
         <div id="pageContent"></div>
     </div>
@@ -576,7 +968,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="ModalManager.close('waterSettingsModal')">Cancel</button>
-                <button class="btn-primary" onclick="Water.saveSettings()">Save</button>
+                <button class="btn-primary" onclick="WaterTracker.saveSettings()">Save</button>
             </div>
         </div>
     </div>
@@ -885,27 +1277,30 @@
         </div>
     </div>
 
-    <!-- Core Scripts -->
-    <script src="js/core/security.js"></script>
-    <script src="js/core/dataManager.js"></script>
-    <script src="js/core/notifications.js"></script>
-    <script src="js/core/modal.js"></script>
-    <script src="js/core/performance.js"></script>
-    <script src="js/core/i18n.js"></script>
+    <!-- Core Scripts (using utils folder) -->
+    <script src="js/utils/security.js"></script>
+    <script src="js/utils/dataManager.js"></script>
+    <script src="js/utils/notifications.js"></script>
+    <script src="js/utils/modal.js"></script>
+    <script src="js/utils/performance.js"></script>
+    <script src="js/i18n.js"></script>
 
     <!-- Module Scripts -->
-    <script src="js/modules/auth.js"></script>
-    <script src="js/modules/tasks.js"></script>
-    <script src="js/modules/mood.js"></script>
-    <script src="js/modules/expenses.js"></script>
-    <script src="js/modules/calendar.js"></script>
-    <script src="js/modules/analytics.js"></script>
-    <script src="js/modules/aiAssistant.js"></script>
-    <script src="js/modules/habits.js"></script>
-    <script src="js/modules/pomodoro.js"></script>
-    <script src="js/modules/notes.js"></script>
-    <script src="js/modules/water.js"></script>
-    <script src="js/modules/export.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/moodManager.js"></script>
+    <script src="js/transactionManager.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/aiAssistant.js"></script>
+    <script src="js/habitTracker.js"></script>
+    <script src="js/pomodoroTimer.js"></script>
+    <script src="js/notesManager.js"></script>
+    <script src="js/waterTracker.js"></script>
+    <script src="js/exportManager.js"></script>
+    <script src="js/goalTracker.js"></script>
+    <script src="js/sleepTracker.js"></script>
+    <script src="js/focusMode.js"></script>
 
     <!-- Gamification System -->
     <script src="js/gamification.js"></script>
@@ -931,6 +1326,68 @@
     </script>
 
     <!-- Main App -->
+    <script>
+        // Dashboard Widget Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dashboard after a short delay to let other scripts load
+            setTimeout(function() {
+                initDashboardWidgets();
+            }, 500);
+        });
+        
+        function initDashboardWidgets() {
+            // Update Today's Overview
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Update water glasses if data exists
+            if (typeof WaterTracker !== 'undefined') {
+                const waterData = WaterTracker.getTodayData();
+                if (waterData) {
+                    const glassesEl = document.getElementById('waterGlasses');
+                    if (glassesEl) glassesEl.textContent = waterData.glasses || 0;
+                    
+                    // Update visual glasses
+                    const glassElements = document.querySelectorAll('.water-glass');
+                    glassElements.forEach(function(glass, index) {
+                        if (index < (waterData.glasses || 0)) {
+                            glass.classList.add('filled');
+                        } else {
+                            glass.classList.remove('filled');
+                        }
+                    });
+                }
+            }
+            
+            // Update mood widget
+            if (typeof MoodManager !== 'undefined') {
+                const moodData = MoodManager.getTodayMood();
+                if (moodData) {
+                    const moodEmoji = document.getElementById('currentMoodEmoji');
+                    const moodText = document.getElementById('currentMoodText');
+                    if (moodEmoji) moodEmoji.textContent = moodData.emoji || '😊';
+                    if (moodText) moodText.textContent = moodData.label || 'Okay';
+                }
+            }
+            
+            // Update XP points display
+            if (typeof Gamification !== 'undefined') {
+                const xpEl = document.getElementById('xpPoints');
+                if (xpEl) xpEl.textContent = Gamification.stats.xp || 0;
+            }
+            
+            // Update streak
+            if (typeof Gamification !== 'undefined') {
+                const streakEl = document.getElementById('streakCount');
+                if (streakEl) streakEl.textContent = Gamification.stats.streakDays || 0;
+            }
+            
+            console.log('Dashboard widgets initialized');
+        }
+        
+        // Make function global
+        window.initDashboardWidgets = initDashboardWidgets;
+    </script>
+    
     <!-- Widget Customize Modal -->
     <div id="widgetCustomizeModal" class="modal hidden">
         <div class="modal-content">

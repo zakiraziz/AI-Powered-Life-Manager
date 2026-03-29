@@ -3,13 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 🔥 SEO + Theme -->
+    <meta name="description" content="NexOS - Your Personal Operating System for productivity and creativity." />
+    <meta name="theme-color" content="#0f172a" />
+
+    <!-- 🧠 Title -->
     <title>NexOS — Personal Operating System</title>
+
+    <!-- 🎨 Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 🌐 Favicon -->
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- 🎨 Basic Styling -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: radial-gradient(circle at top, #1e293b, #020617);
+        color: white;
+        overflow: hidden;
+      }
+
+      /* 🚀 Loading Screen */
+      #loader {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: #020617;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 9999;
+      }
+
+      .logo {
+        font-family: "Syne", sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        animation: pulse 1.5s infinite;
+      }
+
+      .loading-text {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        opacity: 0.6;
+      }
+
+      @keyframes pulse {
+        0% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+        100% { opacity: 0.5; transform: scale(1); }
+      }
+    </style>
   </head>
+
   <body>
+    <!-- 🚀 Loader -->
+    <div id="loader">
+      <div class="logo">NexOS</div>
+      <div class="loading-text">Booting your system...</div>
+    </div>
+
+    <!-- ⚡ React Root -->
     <div id="root"></div>
+
+    <!-- 🎬 Startup Script -->
+    <script>
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const loader = document.getElementById("loader");
+          loader.style.opacity = "0";
+          loader.style.transition = "0.6s ease";
+
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 600);
+        }, 1200); // delay for cool effect
+      });
+    </script>
+
+    <!-- ⚛️ React Entry -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

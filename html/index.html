@@ -209,3 +209,112 @@
                     </div>
                 </section>
             </div>
+
+            <!-- Habits Page -->
+            <div class="page-content" id="habits">
+                <section class="panel habits-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">My Habits</h3>
+                        <button class="btn btn-small" id="addHabitBtn">+ Add Habit</button>
+                    </div>
+                    <div class="habits-list" id="habitsList">
+                        <div class="empty-state">
+                            <span class="empty-icon">◎</span>
+                            <span class="empty-text">No habits yet</span>
+                            <span class="empty-subtext">Create your first habit to start building better routines</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Goals Page -->
+            <div class="page-content" id="goals">
+                <section class="panel goals-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">My Goals</h3>
+                        <button class="btn btn-small" id="addGoalBtn">+ Add Goal</button>
+                    </div>
+                    <div class="goals-list" id="goalsList">
+                        <div class="empty-state">
+                            <span class="empty-icon">◇</span>
+                            <span class="empty-text">No goals yet</span>
+                            <span class="empty-subtext">Set your first goal to start achieving your dreams</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Tasks Page -->
+            <div class="page-content" id="tasks">
+                <section class="panel tasks-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Today's Tasks</h3>
+                        <button class="btn btn-small" id="addTaskBtn">+ Add Task</button>
+                    </div>
+                    <div class="tasks-list" id="tasksList">
+                        <div class="empty-state">
+                            <span class="empty-icon">□</span>
+                            <span class="empty-text">No tasks for today</span>
+                            <span class="empty-subtext">Add tasks to stay organized and productive</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Mood Page -->
+            <div class="page-content" id="mood">
+                <section class="panel mood-panel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">Mood Tracker</h3>
+                        <button class="btn btn-small" id="logMoodBtn">+ Log Mood</button>
+                    </div>
+                    <div class="mood-selection">
+                        <button class="mood-btn" data-mood="1">
+                            <span class="mood-emoji">😢</span>
+                            <span class="mood-label">Bad</span>
+                        </button>
+                        <button class="mood-btn" data-mood="2">
+                            <span class="mood-emoji">😕</span>
+                            <span class="mood-label">Low</span>
+                        </button>
+                        <button class="mood-btn" data-mood="3">
+                            <span class="mood-emoji">😐</span>
+                            <span class="mood-label">Okay</span>
+                        </button>
+                        <button class="mood-btn" data-mood="4">
+                            <span class="mood-emoji">🙂</span>
+                            <span class="mood-label">Good</span>
+                        </button>
+                        <button class="mood-btn" data-mood="5">
+                            <span class="mood-emoji">😊</span>
+                            <span class="mood-label">Great</span>
+                        </button>
+                    </div>
+                    <div class="mood-history" id="moodHistory">
+                        <div class="empty-state">
+                            <span class="empty-icon">☀</span>
+                            <span class="empty-text">No mood entries</span>
+                            <span class="empty-subtext">Log your mood to track your emotional wellbeing</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Modal Container -->
+            <div class="modal-overlay" id="modalOverlay">
+                <div class="modal" id="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="modalTitle">Add New</h3>
+                        <button class="modal-close" id="modalClose">×</button>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

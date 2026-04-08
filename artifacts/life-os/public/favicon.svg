@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <rect width="64" height="36" rx="15" fill="url(#shine)"/>
+  <!-- Main sparkle -->
+  <path d="M32 13 L34.8 27.2 L49 30 L34.8 32.8 L32 47 L29.2 32.8 L15 30 L29.2 27.2 Z" fill="white"/>
+  <!-- Small top-right -->
+  <path d="M47 15 L48.1 19.9 L53 21 L48.1 22.1 L47 27 L45.9 22.1 L41 21 L45.9 19.9 Z" fill="white" opacity="0.75"/>
+  <!-- Small bottom-left -->
+  <path d="M17 38 L17.8 42.2 L22 43 L17.8 43.8 L17 48 L16.2 43.8 L12 43 L16.2 42.2 Z" fill="white" opacity="0.6"/>
+</svg>

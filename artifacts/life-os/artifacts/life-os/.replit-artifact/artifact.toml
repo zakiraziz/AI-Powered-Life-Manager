@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "LifeOS"
+version = "1.0.0"
+id = "artifacts/life-os"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19185
+
+[services.development]
+run = "pnpm --filter @workspace/life-os run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/life-os", "run", "build" ]
+publicDir = "artifacts/life-os/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19185"
+BASE_PATH = "/"

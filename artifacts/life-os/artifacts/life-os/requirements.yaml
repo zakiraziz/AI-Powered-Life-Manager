@@ -1,0 +1,19 @@
+packages:
+  "framer-motion": "For fluid page transitions, layout animations, and micro-interactions"
+  "date-fns": "For elegant date formatting and time-of-day greetings"
+  "clsx": "Utility for conditionally joining classNames"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+  "lucide-react": "Beautiful, consistent icon set for the UI"
+
+images:
+  - path: "artifacts/life-os/public/images/hero-bg.png"
+    description: "Abstract, luxurious dark glassmorphism background with vibrant deep purple, indigo, and soft pink glowing gradient meshes, 3D soft light leaks, and a very subtle noise texture. Feels like a premium, modern software aesthetic."
+    aspect_ratio: "16:9"
+  - path: "artifacts/life-os/public/images/logo-mark.png"
+    description: "A minimal, futuristic app icon logo mark for 'LifeOS'. Abstract geometric shape glowing with an indigo and pink gradient on a transparent or pure black background."
+    aspect_ratio: "1:1"
+
+notes:
+  - "The app relies on the pre-generated API hooks exported from @workspace/api-client-react"
+  - "Using Framer Motion heavily for the luxurious, smooth aesthetic requested"
+  - "Dark mode is forced by default via CSS variables to guarantee the premium dark glassmorphism look"

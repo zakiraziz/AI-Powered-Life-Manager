@@ -5,12 +5,53 @@
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "build:backend": "pnpm --filter \"./packages/backend\" build",
+    "build:frontend": "pnpm --filter \"./packages/frontend\" build",
+    "dev": "pnpm -r --parallel --if-present run dev",
+    "dev:backend": "pnpm --filter \"./packages/backend\" dev",
+    "dev:frontend": "pnpm --filter \"./packages/frontend\" dev",
+    "test": "pnpm -r --if-present run test",
+    "test:backend": "pnpm --filter \"./packages/backend\" test",
+    "test:frontend": "pnpm --filter \"./packages/frontend\" test",
+    "lint": "pnpm -r --if-present run lint",
+    "lint:fix": "pnpm -r --if-present run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "clean": "pnpm -r --if-present run clean && rm -rf node_modules artifacts",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "prepare": "husky install",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "private": true,
   "devDependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.8.1",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.1",
+    "tsx": "^4.6.1",
     "typescript": "~5.9.2",
-    "prettier": "^3.8.1"
-  }
+    "vite": "^5.0.0",
+    "vitest": "^0.34.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.10.0"
 }
